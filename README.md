@@ -6,7 +6,7 @@ v0.1 download: https://github.com/Kataiser/I-Need-a-Hero/releases
 Uses image recognition, based on an automatically loaded screenshot, to suggest the best (and worst) heroes for you and your team to play.
 
 Installation and running instructions:
-Unzip to \Documents\Overwatch\ScreenShots (but not to \Documents\Overwatch\ScreenShots\Overwatch) and launch setup.bat (double click). To run, launch run.bat, then hold tab and press the "print screen" button once in game. Only works properly once the enemies are actually displayed.
+Unzip to \Documents\Overwatch\ScreenShots (but not to \Documents\Overwatch\ScreenShots\Overwatch) and launch setup.bat (double click). To run, launch run.bat, move the windows to a second monitor (if you have one), then hold tab and press the "print screen" button once in game. Only works properly once the enemies are actually displayed.
 
 Requirements: Python 3.6 (https://www.python.org/downloads). Libraries are downloaded by setup.bat.
 
