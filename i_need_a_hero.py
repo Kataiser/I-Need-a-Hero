@@ -13,7 +13,7 @@ except (ImportError, ModuleNotFoundError):
 from get_counters import get_counter  # naming is hard
 import namenum_converter as conv
 
-dev = True
+dev = False
 
 heroes = ['ana', 'bastion', 'dva', 'genji', 'hanzo',
           'junkrat', 'lucio', 'mccree', 'mei', 'mercy',
