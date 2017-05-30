@@ -132,7 +132,7 @@ while True:
 
             print_conf = int(likely_num * 100)
             print("Most likely is " + likely_name
-                  + ", with a confidence score of " + str(print_conf) + "%")
+                  + ", with a confidence of " + str(print_conf) + "%")
             total_confidence.append(print_conf)
 
             prev_name = likely_name
@@ -144,8 +144,9 @@ while True:
                     likely_num = confidences[i]
                     likely_name = heroes[i]
             print("Second most is " + likely_name
-                  + ", with a confidence score of " + str(int(likely_num * 100)) + "%")
+                  + ", with a confidence of " + str(int(likely_num * 100)) + "%")
 
+        print('\n')
         enemy_team_fancy = ''
         for i in enemy_team:
             hero = conv.fancify(i)
@@ -162,40 +163,52 @@ while True:
         total_conf_average = int(sum(total_confidence) / float(len(total_confidence)))
         print("Confidence: " + str(total_conf_average) + '%')
 
-        all_counters = {}  # begin getting counters
+        enemy_is_heroes = True
+        j = 0
+        for i in enemy_team:
+            if (i == 'loading') or (i == 'unknown'):
+                j += 1
+        if j == 6:
+            enemy_is_heroes = False
 
-        for any_hero in heroes_normal:
-            all_counters[any_hero] = 0
-            for enemy_hero in enemy_team:
-                enemy_hero = conv.strip_dead(enemy_hero)
-                if ('unknown' not in any_hero) and ('loading' not in any_hero):
-                    countered = get_counter(any_hero, enemy_hero)
-                    all_counters[any_hero] -= countered
+        if enemy_is_heroes and (total_conf_average > 90):  # is this valid to get counters from
+            all_counters = {}  # begin getting counters
 
-        sorted_counters = sorted(all_counters.items(), reverse=True, key=lambda z: z[1])  # wtf
-        final_counters = ''
+            for any_hero in heroes_normal:
+                all_counters[any_hero] = 0
+                for enemy_hero in enemy_team:
+                    enemy_hero = conv.strip_dead(enemy_hero)
+                    if ('unknown' not in any_hero) and ('loading' not in any_hero):
+                        countered = get_counter(any_hero, enemy_hero)
+                        all_counters[any_hero] -= countered
 
-        for hero in sorted_counters:
-            # print(hero)
-            hero = str(hero)
-            full_counter = ''
-            if '-' in hero:  # if negative
-                just_name = hero[2:-6]
-                just_num = -int(hero[-2:-1])
-            else:
-                just_name = hero[2:-5]
-                just_num = int(hero[-2:-1])
-            full_counter = conv.fancify(just_name) + ': ' + str(just_num)
-            final_counters += (full_counter + ', ')
-        print('\n')   # end getting counters
+            sorted_counters = sorted(all_counters.items(), reverse=True, key=lambda z: z[1])  # wtf
+            final_counters = ''
 
-        print('\n' + "Counters (higher is better): ")
-        print(final_counters[:-2] + '\n')
+            for hero in sorted_counters:
+                # print(hero)
+                hero = str(hero)
+                full_counter = ''
+                if '-' in hero:  # if negative
+                    just_name = hero[2:-6]
+                    just_num = -int(hero[-2:-1])
+                else:
+                    just_name = hero[2:-5]
+                    just_num = int(hero[-2:-1])
+                full_counter = conv.fancify(just_name) + ': ' + str(just_num)
+                final_counters += (full_counter + ', ')
+            print('\n')   # end getting counters
+
+            print("Counters (higher is better): ")
+            print(final_counters[:-2] + '\n')
+        elif not enemy_is_heroes:
+            print("\nThe enemy team appears to be all loading or unknown, which counters can't be calculated from.")
 
         if total_conf_average > 90 and not dev:
             os.remove('Overwatch/' + inputs_diff[0])
             print("Deleted " + current_filename)
         else:
+            print("\nThis doesn't seem to be a screenshot of the tab menu, so counters have not been calculated.")
             print("Didn't delete " + current_filename)
         inputs_before = os.listdir('Overwatch')
 
@@ -203,4 +216,4 @@ while True:
             raise SystemExit
 
         print('\n')
-        print('Analysis complete. Hold tab and press the "print screen" button to analyze and get counters.')
+        print('Analysis complete. Hold tab and press the "print screen" button to get a new set of counters.')
