@@ -1,8 +1,7 @@
 # I-Need-a-Hero
 Automatic hero suggester for Overwatch
-v0.1
 
-Download: https://github.com/Kataiser/I-Need-a-Hero/releases
+v0.1 download: https://github.com/Kataiser/I-Need-a-Hero/releases
 
 Uses image recognition, based on an automatically loaded screenshot, to suggest the best (and worst) heroes for you and your team to play.
 
