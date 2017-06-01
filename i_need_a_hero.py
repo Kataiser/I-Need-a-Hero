@@ -66,6 +66,16 @@ while True:
     if continue_ or dev:
         # starting analysis
         time.sleep(0.1)
+
+        config = configparser.ConfigParser()  # in case settings have been changed while waiting
+        with open('settings.ini', 'r+') as configfile:
+            config.read('settings.ini')
+            delete_thresehold = int(config['MAIN']['delete_thresehold'])
+            process_threshold = int(config['MAIN']['process_threshold'])
+            low_precision = ast.literal_eval(config['MAIN']['low_precision'])
+            process_allies = ast.literal_eval(config['MAIN']['process_allies'])
+            dev = ast.literal_eval(config['MAIN']['dev'])
+
         inputs_diff = list(set(os.listdir('Overwatch')) - set(inputs_before))
         current_filename = str(inputs_diff)[2:-2]
         print("\nProcessing " + current_filename)
@@ -182,7 +192,15 @@ while True:
         total_conf_average = int(sum(total_confidence) / float(len(total_confidence)))
         print("Confidence: " + str(total_conf_average) + '%')
 
-        if total_conf_average > process_threshold and process_allies:
+        enemy_is_heroes = True
+        j = 0
+        for i in enemy_team:
+            if (i == 'loading') or (i == 'unknown'):
+                j += 1
+        if j == 6:
+            enemy_is_heroes = False
+
+        if total_conf_average > process_threshold and process_allies and enemy_is_heroes:
             allied_team_counter = 0
             for i in enemy_team:
                 for j in allied_team:
@@ -191,16 +209,12 @@ while True:
             #print(allied_team_counter)
             if allied_team_counter < 0:
                 print("Your team has an counter advantage of " + str(-allied_team_counter))
-            else:
+            elif allied_team_counter > 0:
                 print("The enemy team has an counter advantage of " + str(allied_team_counter))
-
-        enemy_is_heroes = True
-        j = 0
-        for i in enemy_team:
-            if (i == 'loading') or (i == 'unknown'):
-                j += 1
-        if j == 6:
-            enemy_is_heroes = False
+            elif allied_team_counter == 0:
+                print("Neither team has a counter advantage")
+            else:
+                raise ValueError
 
         if enemy_is_heroes and (total_conf_average > process_threshold):  # is this valid to get counters from
             all_counters = {}  # begin getting counters
