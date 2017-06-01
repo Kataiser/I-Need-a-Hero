@@ -14,6 +14,10 @@ from get_counters import get_counter  # naming is hard
 import namenum_converter as conv
 
 dev = False
+delete_thresehold = 100
+process_threshold = 90
+low_precision = False
+process_allies = True
 
 heroes = ['ana', 'bastion', 'dva', 'genji', 'hanzo',
           'junkrat', 'lucio', 'mccree', 'mei', 'mercy',
@@ -32,8 +36,14 @@ for i in heroes:
     if ('unknown' not in hero) and ('loading' not in hero):
         heroes_normal.append(hero)
 
-filenames = ['ally1', 'ally2', 'ally3', 'ally4', 'ally5', 'ally6',
-             'enemy1', 'enemy2', 'enemy3', 'enemy4', 'enemy5', 'enemy6']
+if process_allies:
+    filenames = ['ally1', 'ally2', 'ally3', 'ally4', 'ally5', 'ally6',
+                 'enemy1', 'enemy2', 'enemy3', 'enemy4', 'enemy5', 'enemy6']
+else:
+    filenames = ['enemy1', 'enemy2', 'enemy3', 'enemy4', 'enemy5', 'enemy6']
+if dev:
+    print('FYI, developer mode is on.')
+    dev_file = 'bettercrop.jpg'
 
 inputs_before = os.listdir('Overwatch')
 
@@ -57,7 +67,7 @@ while True:
         if not dev:
             screenshot = Image.open('Overwatch/' + inputs_diff[0]).resize((1920, 1080))
         else:
-            screenshot = Image.open('bettercrop.jpg').resize((1920, 1080))
+            screenshot = Image.open(dev_file).resize((1920, 1080))
 
         ally1 = screenshot.crop((443, 584, 519, 660))
         ally2 = screenshot.crop((634, 584, 710, 660))
@@ -101,10 +111,14 @@ while True:
             x = 0
             y = 0
             j = 0
+            if low_precision:
+                step = 2
+            else:
+                step = 1
             for j in range(0, len(heroes)):
                 learned_image = Image.open('learned/' + heroes[j] + '.png').load()
-                for x in range(0, 75):
-                    for y in range(0, 75):
+                for x in range(0, 75, step):
+                    for y in range(0, 75, step):
                         input_color = unknown[x, y]
                         input_color = int(re.sub('[^0-9]', '', str(input_color)[1:4]))  # sorry
 
@@ -143,8 +157,9 @@ while True:
                 if confidences[i] > likely_num and heroes[i] != prev_name:
                     likely_num = confidences[i]
                     likely_name = heroes[i]
+            print_conf = int(likely_num * 100)
             print("Second most is " + likely_name
-                  + ", with a confidence of " + str(int(likely_num * 100)) + "%")
+                  + ", with a confidence of " + str(print_conf) + "%")
 
         print('\n')
         enemy_team_fancy = ''
@@ -152,16 +167,27 @@ while True:
             hero = conv.fancify(i)
             enemy_team_fancy += (hero + ', ')
         print("Enemy team: " + enemy_team_fancy[:-2])
-
-        allied_team_fancy = ''
-        allied_team_counters = 0
-        for i in allied_team:
-            hero = conv.fancify(i)
-            allied_team_fancy += (hero + ', ')
-        print("Allied team: " + allied_team_fancy[:-2])
+        if process_allies:
+            allied_team_fancy = ''
+            for i in allied_team:
+                hero = conv.fancify(i)
+                allied_team_fancy += (hero + ', ')
+            print("Allied team: " + allied_team_fancy[:-2])
 
         total_conf_average = int(sum(total_confidence) / float(len(total_confidence)))
         print("Confidence: " + str(total_conf_average) + '%')
+
+        if total_conf_average > process_threshold and process_allies:
+            allied_team_counter = 0
+            for i in enemy_team:
+                for j in allied_team:
+                    cross_team_counter = get_counter(i, j)
+                    allied_team_counter -= cross_team_counter
+            #print(allied_team_counter)
+            if allied_team_counter < 0:
+                print("Your team has an counter advantage of " + str(-allied_team_counter))
+            else:
+                print("The enemy team has an counter advantage of " + str(allied_team_counter))
 
         enemy_is_heroes = True
         j = 0
@@ -171,7 +197,7 @@ while True:
         if j == 6:
             enemy_is_heroes = False
 
-        if enemy_is_heroes and (total_conf_average > 90):  # is this valid to get counters from
+        if enemy_is_heroes and (total_conf_average > process_threshold):  # is this valid to get counters from
             all_counters = {}  # begin getting counters
 
             for any_hero in heroes_normal:
@@ -184,17 +210,11 @@ while True:
 
             sorted_counters = sorted(all_counters.items(), reverse=True, key=lambda z: z[1])  # wtf
             final_counters = ''
+            #print(sorted_counters)
 
             for hero in sorted_counters:
-                # print(hero)
-                hero = str(hero)
-                full_counter = ''
-                if '-' in hero:  # if negative
-                    just_name = hero[2:-6]
-                    just_num = -int(hero[-2:-1])
-                else:
-                    just_name = hero[2:-5]
-                    just_num = int(hero[-2:-1])
+                just_name = hero[0]
+                just_num = hero[1]
                 full_counter = conv.fancify(just_name) + ': ' + str(just_num)
                 final_counters += (full_counter + ', ')
             print('\n')   # end getting counters
@@ -204,12 +224,16 @@ while True:
         elif not enemy_is_heroes:
             print("\nThe enemy team appears to be all loading or unknown, which counters can't be calculated from.")
 
-        if total_conf_average > 90 and not dev:
+        if total_conf_average > delete_thresehold and not dev:
             os.remove('Overwatch/' + inputs_diff[0])
-            print("Deleted " + current_filename)
+            print("Deleted " + current_filename + ' (needed ' + str(delete_thresehold)
+                  + '% confidence, got ' + str(total_conf_average) + '%)')
         else:
-            print("\nThis doesn't seem to be a screenshot of the tab menu, so counters have not been calculated.")
-            print("Didn't delete " + current_filename)
+            print("Didn't delete " + current_filename + ' (needs ' + str(delete_thresehold)
+                  + '% confidence, got ' + str(total_conf_average) + '%)')
+            if delete_thresehold >= 100:
+                print("The delete threshold is currently 100%, which means that even tab menu screenshots aren't"
+                      " deleted. Be sure to clean the screenshots folder out manually every now and then.")
         inputs_before = os.listdir('Overwatch')
 
         if dev:
