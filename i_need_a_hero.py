@@ -3,6 +3,8 @@ import loading  # stfu pycharm, I swear this is used
 import re
 import os
 import time
+import configparser
+import ast
 
 try:
     from PIL import Image
@@ -13,11 +15,14 @@ except (ImportError, ModuleNotFoundError):
 from get_counters import get_counter  # naming is hard
 import namenum_converter as conv
 
-dev = False
-delete_thresehold = 100
-process_threshold = 90
-low_precision = False
-process_allies = True
+config = configparser.ConfigParser()
+with open('settings.ini', 'r+') as configfile:
+    config.read('settings.ini')
+    delete_thresehold = int(config['MAIN']['delete_thresehold'])
+    process_threshold = int(config['MAIN']['process_threshold'])
+    low_precision = ast.literal_eval(config['MAIN']['low_precision'])
+    process_allies = ast.literal_eval(config['MAIN']['process_allies'])
+    dev = ast.literal_eval(config['MAIN']['dev'])
 
 heroes = ['ana', 'bastion', 'dva', 'genji', 'hanzo',
           'junkrat', 'lucio', 'mccree', 'mei', 'mercy',
