@@ -23,6 +23,7 @@ with open('settings.ini', 'r+') as configfile:
     low_precision = ast.literal_eval(config['MAIN']['low_precision'])
     process_allies = ast.literal_eval(config['MAIN']['process_allies'])
     dev = ast.literal_eval(config['MAIN']['dev'])
+    preview = ast.literal_eval(config['MAIN']['preview'])
 
 heroes = ['ana', 'bastion', 'dva', 'genji', 'hanzo',
           'junkrat', 'lucio', 'mccree', 'mei', 'mercy',
@@ -52,7 +53,7 @@ if dev:
 
 inputs_before = os.listdir('Overwatch')
 
-print('Loading complete. Hold tab and press the "print screen" button to analyze and get counters.')
+loading.done()
 
 while True:
     time.sleep(0.5)  # to stop high cpu usage while waiting
@@ -79,10 +80,14 @@ while True:
         inputs_diff = list(set(os.listdir('Overwatch')) - set(inputs_before))
         current_filename = str(inputs_diff)[2:-2]
         print("\nProcessing " + current_filename)
+
         if not dev:
             screenshot = Image.open('Overwatch/' + inputs_diff[0]).resize((1920, 1080))
         else:
             screenshot = Image.open(dev_file).resize((1920, 1080))
+
+        if preview:
+            screenshot.resize((480, 270)).show()
 
         ally1 = screenshot.crop((443, 584, 519, 660))
         ally2 = screenshot.crop((634, 584, 710, 660))

@@ -6,6 +6,7 @@ except (ImportError, ModuleNotFoundError):
 
 import namenum_converter as conv
 
+
 def get_counter(hero1, hero2):
     if hero1 == 'unknown' or hero1 == 'loading':
         return 0

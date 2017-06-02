@@ -1,14 +1,17 @@
 def name_to_num(name):
     return table_long[name]
 
+
 def num_to_name(num):
     return table_reversed[num]
+
 
 def fancify(name):
     fancy = table_reversed[table_long[name]]  # inefficiency yay
     if not fancy:  # lol
         fancy = name
     return fancy
+
 
 def strip_dead(name):
     if 'dead' in name:
