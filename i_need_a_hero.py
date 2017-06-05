@@ -244,9 +244,11 @@ while True:
             print('\n')   # end getting counters
 
             print("Counters (higher is better): ")
-            print(final_counters[:-2] + '\n')
+            print(final_counters[:-2])
         elif not enemy_is_heroes:
             print("\nThe enemy team appears to be all loading or unknown, which counters can't be calculated from.")
+
+        print('\n')
 
         if total_conf_average > delete_thresehold and not dev:
             os.remove('Overwatch/' + inputs_diff[0])
