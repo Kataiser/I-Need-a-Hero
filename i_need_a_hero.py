@@ -20,6 +20,7 @@ with open('settings.ini', 'r+') as configfile:
     config.read('settings.ini')
     delete_thresehold = int(config['MAIN']['delete_thresehold'])
     process_threshold = int(config['MAIN']['process_threshold'])
+    refresh_delay = float(config['MAIN']['refresh_delay'])
     low_precision = ast.literal_eval(config['MAIN']['low_precision'])
     process_allies = ast.literal_eval(config['MAIN']['process_allies'])
     dev = ast.literal_eval(config['MAIN']['dev'])
@@ -56,7 +57,7 @@ inputs_before = os.listdir('Overwatch')
 loading.done()
 
 while True:
-    time.sleep(0.5)  # to stop high cpu usage while waiting
+    time.sleep(refresh_delay)  # to stop high cpu usage while waiting
     continue_ = False
     inputs_after = os.listdir('Overwatch')
     if len(inputs_after) > len(inputs_before):
@@ -73,9 +74,11 @@ while True:
             config.read('settings.ini')
             delete_thresehold = int(config['MAIN']['delete_thresehold'])
             process_threshold = int(config['MAIN']['process_threshold'])
+            refresh_delay = float(config['MAIN']['refresh_delay'])
             low_precision = ast.literal_eval(config['MAIN']['low_precision'])
             process_allies = ast.literal_eval(config['MAIN']['process_allies'])
             dev = ast.literal_eval(config['MAIN']['dev'])
+            preview = ast.literal_eval(config['MAIN']['preview'])
 
         inputs_diff = list(set(os.listdir('Overwatch')) - set(inputs_before))
         current_filename = str(inputs_diff)[2:-2]
@@ -140,10 +143,10 @@ while True:
                 for x in range(0, 75, step):
                     for y in range(0, 75, step):
                         input_color = unknown[x, y]
-                        input_color = int(re.sub('[^0-9]', '', str(input_color)[1:4]))  # sorry
+                        input_color = input_color[0]
 
                         learned_color = learned_image[x, y]
-                        learned_color = int(re.sub('[^0-9]', '', str(learned_color)[1:4]))
+                        learned_color = learned_color[0]
 
                         confidences[j] += abs(input_color - learned_color)
                 confidences[j] = 1 - (confidences[j] / 1434375)
