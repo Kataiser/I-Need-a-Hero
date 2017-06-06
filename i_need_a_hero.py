@@ -14,16 +14,22 @@ except (ImportError, ModuleNotFoundError):
 from get_counters import get_counter  # naming is hard
 import namenum_converter as conv
 
-config = configparser.ConfigParser()
+
+def format_counter_list(counter_list):
+    final_counters = ''
+    for pair in counter_list:
+        just_name = pair[0]
+        just_num = pair[1]
+        full_counter = conv.fancify(just_name) + ': ' + str(just_num)
+        final_counters += (full_counter + ', ')
+    return final_counters[:-2]  # removes extra comma and space
+
+config = configparser.ConfigParser()  # load some settings
 with open('settings.ini', 'r') as configfile:
     config.read('settings.ini')
-    delete_thresehold = int(config['MAIN']['delete_thresehold'])
-    process_threshold = int(config['MAIN']['process_threshold'])
     refresh_delay = float(config['MAIN']['refresh_delay'])
-    low_precision = ast.literal_eval(config['MAIN']['low_precision'])
     process_allies = ast.literal_eval(config['MAIN']['process_allies'])
     dev = ast.literal_eval(config['MAIN']['dev'])
-    preview = ast.literal_eval(config['MAIN']['preview'])
 
 heroes = ['ana', 'bastion', 'dva', 'genji', 'hanzo',
           'junkrat', 'lucio', 'mccree', 'mei', 'mercy',
@@ -34,7 +40,13 @@ heroes = ['ana', 'bastion', 'dva', 'genji', 'hanzo',
           'luciodead', 'mccreedead', 'meidead', 'pharahdead', 'reaperdead',
           'roadhogdead', 'soldierdead', 'sombradead', 'torbjorndead', 'tracerdead',
           'zaryadead', 'zenyattadead', 'hanzodead', 'mercydead', 'orisadead',
-          'reinhardtdead', 'symmetradead', 'widowmakerdead', 'winstondead']
+          'reinhardtdead', 'symmetradead', 'widowmakerdead', 'winstondead', 'orisa']
+
+heroes_dps = ['bastion', 'genji', 'hanzo', 'junkrat', 'mccree',
+              'mei', 'pharah', 'reaper', 'soldier', 'sombra',
+              'symmetra', 'torbjorn', 'tracer', 'widowmaker']
+heroes_tank = ['dva', 'reinhardt', 'roadhog', 'winston', 'zarya', 'orisa']
+heroes_heal = ['ana', 'lucio', 'mercy', 'zenyatta']
 
 heroes_normal = []  # a list of heroes, not fancy, without unknown, loading, or dead
 for i in heroes:
@@ -69,7 +81,7 @@ while True:
 
         process_time_start = time.time()
 
-        config = configparser.ConfigParser()  # in case settings have been changed while waiting
+        config = configparser.ConfigParser()  # load all settings
         with open('settings.ini', 'r') as configfile:
             config.read('settings.ini')
             delete_thresehold = int(config['MAIN']['delete_thresehold'])
@@ -78,6 +90,7 @@ while True:
             low_precision = ast.literal_eval(config['MAIN']['low_precision'])
             process_allies = ast.literal_eval(config['MAIN']['process_allies'])
             show_processing_text = ast.literal_eval(config['MAIN']['show_processing_text'])
+            old_counter_list = ast.literal_eval(config['MAIN']['old_counter_list'])
             dev = ast.literal_eval(config['MAIN']['dev'])
             preview = ast.literal_eval(config['MAIN']['preview'])
 
@@ -245,16 +258,36 @@ while True:
 
             sorted_counters = sorted(all_counters.items(), reverse=True, key=lambda z: z[1])  # wtf
 
-            final_counters = ''
-            for hero in sorted_counters:
-                just_name = hero[0]
-                just_num = hero[1]
-                full_counter = conv.fancify(just_name) + ': ' + str(just_num)
-                final_counters += (full_counter + ', ')
-            print('\n')   # end getting counters
+            if not old_counter_list:
+                dps_counters = []
+                tank_counters = []
+                heal_counters = []
+                for pair in sorted_counters:
+                    just_name = pair[0]
+                    just_num = pair[1]
+                    if just_name in heroes_dps:
+                        dps_counters.append(tuple((just_name, just_num)))
+                    if just_name in heroes_tank:
+                        tank_counters.append(tuple((just_name, just_num)))
+                    if just_name in heroes_heal:
+                        heal_counters.append(tuple((just_name, just_num)))
+                # no need to sort these, sorted_counters was already sorted (duh)
 
-            print("Counters (higher is better): ")
-            print(final_counters[:-2])  # removes extra comma and space
+                final_counters_dps = format_counter_list(dps_counters)
+                final_counters_tank = format_counter_list(tank_counters)
+                final_counters_heal = format_counter_list(heal_counters)
+                print('\n')
+
+                print("Counters (higher is better)")
+                print("DPS: " + final_counters_dps)
+                print("Tanks: " + final_counters_tank)
+                print("Healers: " + final_counters_heal)
+            else:
+                final_counters = format_counter_list(sorted_counters)
+                print('\n')
+                print("Counters (higher is better)")
+                print(final_counters)
+            # end getting counters
         elif not enemy_is_heroes:
             print("\nThe enemy team appears to be all loading or unknown, which counters can't be calculated from.")
 
