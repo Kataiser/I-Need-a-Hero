@@ -1,6 +1,5 @@
-import loading  # stfu pycharm, I swear this is used
+import loading
 
-import re
 import os
 import time
 import configparser
@@ -16,7 +15,7 @@ from get_counters import get_counter  # naming is hard
 import namenum_converter as conv
 
 config = configparser.ConfigParser()
-with open('settings.ini', 'r+') as configfile:
+with open('settings.ini', 'r') as configfile:
     config.read('settings.ini')
     delete_thresehold = int(config['MAIN']['delete_thresehold'])
     process_threshold = int(config['MAIN']['process_threshold'])
@@ -37,7 +36,7 @@ heroes = ['ana', 'bastion', 'dva', 'genji', 'hanzo',
           'zaryadead', 'zenyattadead', 'hanzodead', 'mercydead', 'orisadead',
           'reinhardtdead', 'symmetradead', 'widowmakerdead', 'winstondead']
 
-heroes_normal = []
+heroes_normal = []  # a list of heroes, not fancy, without unknown, loading, or dead
 for i in heroes:
     hero = conv.strip_dead(i)
     if ('unknown' not in hero) and ('loading' not in hero):
@@ -52,7 +51,7 @@ if dev:
     print('FYI, developer mode is on.')
     dev_file = 'bettercrop.jpg'
 
-inputs_before = os.listdir('Overwatch')
+inputs_before = os.listdir('Overwatch')  # a list of every file in the screenshots folder
 
 loading.done()
 
@@ -60,17 +59,16 @@ while True:
     time.sleep(refresh_delay)  # to stop high cpu usage while waiting
     continue_ = False
     inputs_after = os.listdir('Overwatch')
-    if len(inputs_after) > len(inputs_before):
+    if len(inputs_after) > len(inputs_before):  # if a file is added
         continue_ = True
-    if len(inputs_after) < len(inputs_before):
+    if len(inputs_after) < len(inputs_before):  # if a file is removed
         continue_ = False
         inputs_before = os.listdir('Overwatch')
     if continue_ or dev:
         # starting analysis
-        time.sleep(0.1)
 
         config = configparser.ConfigParser()  # in case settings have been changed while waiting
-        with open('settings.ini', 'r+') as configfile:
+        with open('settings.ini', 'r') as configfile:
             config.read('settings.ini')
             delete_thresehold = int(config['MAIN']['delete_thresehold'])
             process_threshold = int(config['MAIN']['process_threshold'])
@@ -81,11 +79,16 @@ while True:
             preview = ast.literal_eval(config['MAIN']['preview'])
 
         inputs_diff = list(set(os.listdir('Overwatch')) - set(inputs_before))
-        current_filename = str(inputs_diff)[2:-2]
+        current_filename = str(inputs_diff)[2:-2]  # removes brackets and quotes
         print("\nProcessing " + current_filename)
 
         if not dev:
-            screenshot = Image.open('Overwatch/' + inputs_diff[0]).resize((1920, 1080))
+            try:
+                screenshot = Image.open('Overwatch/' + inputs_diff[0]).resize((1920, 1080))
+            except OSError:
+                print("This doesn't seem to be an image file.")
+                inputs_before = os.listdir('Overwatch')  # resets screenshot folder list
+                continue
         else:
             screenshot = Image.open(dev_file).resize((1920, 1080))
 
@@ -122,24 +125,19 @@ while True:
         enemy_team = []
         total_confidence = []
 
-        h = 0
         for h in range(0, len(filenames)):
             unknown = Image.open('output/' + filenames[h] + '.png').load()
 
             confidences = []
             for i in heroes:
-                confidences.append(0)
-            #print(confidences)
+                confidences.append(0)  # makes a hero-long list of zeroes
 
-            x = 0
-            y = 0
-            j = 0
             if low_precision:
-                step = 2
+                step = 2  # skips every other pixel
             else:
                 step = 1
-            for j in range(0, len(heroes)):
-                learned_image = Image.open('learned/' + heroes[j] + '.png').load()
+            for j in range(0, len(heroes)):  # the image recognition magic
+                learned_image = Image.open('learned/' + heroes[j] + '.png').load()  # inefficiency yay
                 for x in range(0, 75, step):
                     for y in range(0, 75, step):
                         input_color = unknown[x, y]
@@ -149,33 +147,29 @@ while True:
                         learned_color = learned_color[0]
 
                         confidences[j] += abs(input_color - learned_color)
-                confidences[j] = 1 - (confidences[j] / 1434375)
-
-            likely_name = ''
-            likely_num = 0
-            i = 0
-            for i in range(0, len(confidences)):
-                #print(heroes[i] + ': ' + str(confidences[i]))
-                if confidences[i] > likely_num:
-                    likely_num = confidences[i]
-                    likely_name = heroes[i]
-
-            if 'ally' in filenames[h]:
-                allied_team.append(likely_name)
-            elif 'enemy' in filenames[h]:
-                enemy_team.append(likely_name)
+                confidences[j] = 1 - (confidences[j] / 1434375)  # the maximum difference between two 76x76 images
 
             print("For " + filenames[h] + ":")
 
+            likely_name = ''  # find the most likely hero
+            likely_num = 0
+            for i in range(0, len(confidences)):
+                if confidences[i] > likely_num:
+                    likely_num = confidences[i]
+                    likely_name = heroes[i]
             print_conf = int(likely_num * 100)
             print("Most likely is " + likely_name
                   + ", with a confidence of " + str(print_conf) + "%")
             total_confidence.append(print_conf)
 
-            prev_name = likely_name
+            if 'ally' in filenames[h]:
+                allied_team.append(likely_name)  # builds the team lists
+            elif 'enemy' in filenames[h]:
+                enemy_team.append(likely_name)
+
+            prev_name = likely_name  # find the second most likely hero
             likely_name = ''
             likely_num = 0
-            i = 0
             for i in range(0, len(confidences)):
                 if confidences[i] > likely_num and heroes[i] != prev_name:
                     likely_num = confidences[i]
@@ -190,6 +184,7 @@ while True:
             hero = conv.fancify(i)
             enemy_team_fancy += (hero + ', ')
         print("Enemy team: " + enemy_team_fancy[:-2])
+
         if process_allies:
             allied_team_fancy = ''
             for i in allied_team:
@@ -206,15 +201,16 @@ while True:
             if (i == 'loading') or (i == 'unknown'):
                 j += 1
         if j == 6:
-            enemy_is_heroes = False
+            enemy_is_heroes = False  # if everyone on the enemy team is loading or unknown
 
         if total_conf_average > process_threshold and process_allies and enemy_is_heroes:
+            # get overall team counter advantage
+
             allied_team_counter = 0
             for i in enemy_team:
                 for j in allied_team:
                     cross_team_counter = get_counter(i, j)
                     allied_team_counter -= cross_team_counter
-            #print(allied_team_counter)
             if allied_team_counter < 0:
                 print("Your team has an counter advantage of " + str(-allied_team_counter))
             elif allied_team_counter > 0:
@@ -222,12 +218,14 @@ while True:
             elif allied_team_counter == 0:
                 print("Neither team has a counter advantage")
             else:
-                raise ValueError
+                raise ValueError  # sure why not
 
         if enemy_is_heroes and (total_conf_average > process_threshold):  # is this valid to get counters from
-            all_counters = {}  # begin getting counters
+            # begin getting counters
 
-            for any_hero in heroes_normal:
+            all_counters = {}
+
+            for any_hero in heroes_normal:  # actually gets counters
                 all_counters[any_hero] = 0
                 for enemy_hero in enemy_team:
                     enemy_hero = conv.strip_dead(enemy_hero)
@@ -236,9 +234,8 @@ while True:
                         all_counters[any_hero] -= countered
 
             sorted_counters = sorted(all_counters.items(), reverse=True, key=lambda z: z[1])  # wtf
-            final_counters = ''
-            #print(sorted_counters)
 
+            final_counters = ''
             for hero in sorted_counters:
                 just_name = hero[0]
                 just_num = hero[1]
@@ -247,14 +244,14 @@ while True:
             print('\n')   # end getting counters
 
             print("Counters (higher is better): ")
-            print(final_counters[:-2])
+            print(final_counters[:-2])  # removes extra comma and space
         elif not enemy_is_heroes:
             print("\nThe enemy team appears to be all loading or unknown, which counters can't be calculated from.")
 
-        print('\n')
+        print('\n')  # managing these is hard
 
-        if total_conf_average > delete_thresehold and not dev:
-            os.remove('Overwatch/' + inputs_diff[0])
+        if total_conf_average > delete_thresehold and not dev:  # deletes screenshot once done
+            os.remove('Overwatch/' + inputs_diff[0])  # doesn't recycle, fyi
             print("Deleted " + current_filename + ' (needed ' + str(delete_thresehold)
                   + '% confidence, got ' + str(total_conf_average) + '%)')
         else:
@@ -263,7 +260,7 @@ while True:
             if delete_thresehold >= 100:
                 print("The delete threshold is currently 100%, which means that even tab menu screenshots aren't"
                       " deleted. Be sure to clean the screenshots folder out manually every now and then.")
-        inputs_before = os.listdir('Overwatch')
+        inputs_before = os.listdir('Overwatch')  # resets screenshot folder list
 
         if dev:
             raise SystemExit

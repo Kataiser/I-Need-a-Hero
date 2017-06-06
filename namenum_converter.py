@@ -36,4 +36,4 @@ table_short = {'Ana': 0, 'Bastion': 1, 'D.Va': 2, 'Genji': 3, 'Hanzo': 4,
                'Sombra': 15, 'Symmetra': 16, 'Torbjorn': 17, 'Tracer': 18, 'Widowmaker': 19,
                'Winston': 20, 'Zarya': 21, 'Zenyatta': 22, 'Orisa': 23, '': -1}
 
-table_reversed = {v: k for k, v in table_short.items()}
+table_reversed = {v: k for k, v in table_short.items()}  # again, wtf

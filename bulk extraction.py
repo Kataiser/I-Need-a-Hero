@@ -3,8 +3,6 @@ import os
 import random as r
 import time
 
-#img = Image.open('input/ScreenShot_17-04-29_20-59-04-000.jpg').resize((1920, 1080))
-
 files = os.listdir('bulk-input')
 print(files)
 
