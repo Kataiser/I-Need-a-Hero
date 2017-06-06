@@ -67,6 +67,8 @@ while True:
     if continue_ or dev:
         # starting analysis
 
+        process_time_start = time.time()
+
         config = configparser.ConfigParser()  # in case settings have been changed while waiting
         with open('settings.ini', 'r') as configfile:
             config.read('settings.ini')
@@ -75,12 +77,13 @@ while True:
             refresh_delay = float(config['MAIN']['refresh_delay'])
             low_precision = ast.literal_eval(config['MAIN']['low_precision'])
             process_allies = ast.literal_eval(config['MAIN']['process_allies'])
+            show_processing_text = ast.literal_eval(config['MAIN']['show_processing_text'])
             dev = ast.literal_eval(config['MAIN']['dev'])
             preview = ast.literal_eval(config['MAIN']['preview'])
 
         inputs_diff = list(set(os.listdir('Overwatch')) - set(inputs_before))
         current_filename = str(inputs_diff)[2:-2]  # removes brackets and quotes
-        print("\nProcessing " + current_filename)
+        print("\nProcessing " + current_filename + " at " + str(time.strftime('%I:%M:%S %p', time.localtime())))
 
         if not dev:
             try:
@@ -125,7 +128,7 @@ while True:
         enemy_team = []
         total_confidence = []
 
-        for h in range(0, len(filenames)):
+        for h in range(0, len(filenames)):  # every ally or enemy
             unknown = Image.open('output/' + filenames[h] + '.png').load()
 
             confidences = []
@@ -149,7 +152,8 @@ while True:
                         confidences[j] += abs(input_color - learned_color)
                 confidences[j] = 1 - (confidences[j] / 1434375)  # the maximum difference between two 76x76 images
 
-            print("For " + filenames[h] + ":")
+            if show_processing_text:
+                print("For " + filenames[h] + ":")
 
             likely_name = ''  # find the most likely hero
             likely_num = 0
@@ -158,8 +162,9 @@ while True:
                     likely_num = confidences[i]
                     likely_name = heroes[i]
             print_conf = int(likely_num * 100)
-            print("Most likely is " + likely_name
-                  + ", with a confidence of " + str(print_conf) + "%")
+            if show_processing_text:
+                print("Most likely is " + likely_name
+                      + ", with a confidence of " + str(print_conf) + "%")
             total_confidence.append(print_conf)
 
             if 'ally' in filenames[h]:
@@ -175,10 +180,15 @@ while True:
                     likely_num = confidences[i]
                     likely_name = heroes[i]
             print_conf = int(likely_num * 100)
-            print("Second most is " + likely_name
-                  + ", with a confidence of " + str(print_conf) + "%")
+            if show_processing_text:
+                print("Second most is " + likely_name
+                      + ", with a confidence of " + str(print_conf) + "%")
 
         print('\n')
+
+        process_time_elapsed = time.time() - process_time_start
+        print("Processing finished in " + str(process_time_elapsed)[0:3] + " seconds")
+
         enemy_team_fancy = ''
         for i in enemy_team:
             hero = conv.fancify(i)
