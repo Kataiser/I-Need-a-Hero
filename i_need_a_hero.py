@@ -89,6 +89,7 @@ while True:
             refresh_delay = float(config['MAIN']['refresh_delay'])
             low_precision = ast.literal_eval(config['MAIN']['low_precision'])
             process_allies = ast.literal_eval(config['MAIN']['process_allies'])
+            include_allies_in_counters = ast.literal_eval(config['MAIN']['include_allies_in_counters'])
             show_processing_text = ast.literal_eval(config['MAIN']['show_processing_text'])
             old_counter_list = ast.literal_eval(config['MAIN']['old_counter_list'])
             dev = ast.literal_eval(config['MAIN']['dev'])
@@ -265,12 +266,13 @@ while True:
                 for pair in sorted_counters:
                     just_name = pair[0]
                     just_num = pair[1]
-                    if just_name in heroes_dps:
-                        dps_counters.append(tuple((just_name, just_num)))
-                    if just_name in heroes_tank:
-                        tank_counters.append(tuple((just_name, just_num)))
-                    if just_name in heroes_heal:
-                        heal_counters.append(tuple((just_name, just_num)))
+                    if just_name not in allied_team or include_allies_in_counters:
+                        if just_name in heroes_dps:
+                            dps_counters.append(tuple((just_name, just_num)))
+                        if just_name in heroes_tank:
+                            tank_counters.append(tuple((just_name, just_num)))
+                        if just_name in heroes_heal:
+                            heal_counters.append(tuple((just_name, just_num)))
                 # no need to sort these, sorted_counters was already sorted (duh)
 
                 final_counters_dps = format_counter_list(dps_counters)
