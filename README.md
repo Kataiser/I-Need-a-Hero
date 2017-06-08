@@ -5,6 +5,15 @@ Automatic hero suggester for Overwatch
 
 Uses image recognition, based on an automatically loaded screenshot, to suggest the best (and worst) heroes for you and your team to play.
 
+**Features:**
+- Once it's running, it's almost entirely automatic (no manually entering heroes)
+- Processes fairly quickly (4ish seconds for me)
+- Auto deletes tab menu screenshots (see note at bottom of readme)
+- Shows confidence of image recognition, per hero and overall
+- Shows which team currently has the counter advantage
+- Sorts by hero type (DPS, tank, and healer)
+- Comprehensive settings file
+
 **Installation and running instructions:**
 Unzip to \Documents\Overwatch\ScreenShots (but not to \Documents\Overwatch\ScreenShots\Overwatch) and launch setup.bat (double click). To run, launch run.bat, move the windows to a second monitor (if you have one), then hold tab and press the "print screen" button once in game. Only works properly once the enemies are actually displayed.
 
