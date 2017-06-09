@@ -61,7 +61,7 @@ else:
     filenames = ['enemy1', 'enemy2', 'enemy3', 'enemy4', 'enemy5', 'enemy6']
 if dev:
     print('FYI, developer mode is on.')
-    dev_file = 'bettercrop.jpg'
+    dev_file = 'cropit.jpg'
 
 inputs_before = os.listdir('Overwatch')  # a list of every file in the screenshots folder
 
@@ -112,6 +112,12 @@ while True:
         if preview:
             screenshot.resize((480, 270)).show()
 
+        if low_precision:
+            step = 2  # skips every other pixel
+            process_threshold = int((process_threshold + 100) / 2)  # doesn't quite correspond in practice,
+        else:                                                       # but it's close enough
+            step = 1
+
         ally1 = screenshot.crop((443, 584, 519, 660))
         ally2 = screenshot.crop((634, 584, 710, 660))
         ally3 = screenshot.crop((826, 584, 902, 660))
@@ -149,10 +155,6 @@ while True:
             for i in heroes:
                 confidences.append(0)  # makes a hero-long list of zeroes
 
-            if low_precision:
-                step = 2  # skips every other pixel
-            else:
-                step = 1
             for j in range(0, len(heroes)):  # the image recognition magic
                 learned_image = Image.open('learned/' + heroes[j] + '.png').load()  # inefficiency yay
                 for x in range(0, 75, step):
@@ -207,17 +209,21 @@ while True:
         for i in enemy_team:
             hero = conv.fancify(i)
             enemy_team_fancy += (hero + ', ')
-        print("Enemy team: " + enemy_team_fancy[:-2])
-
         if process_allies:
             allied_team_fancy = ''
             for i in allied_team:
                 hero = conv.fancify(i)
                 allied_team_fancy += (hero + ', ')
-            print("Allied team: " + allied_team_fancy[:-2])
 
         total_conf_average = int(sum(total_confidence) / float(len(total_confidence)))
-        print("Confidence: " + str(total_conf_average) + '%')
+
+        if total_conf_average > process_threshold:
+            print("Enemy team: " + enemy_team_fancy[:-2])
+            print("Allied team: " + allied_team_fancy[:-2])
+            print("Confidence: " + str(total_conf_average) + '%')
+        else:
+            print("This screenshot doesn't seem to be of the tab menu " +
+                  "(needs " + str(process_threshold) + "% confidence, got " + str(total_conf_average) + "%)")
 
         enemy_is_heroes = True
         j = 0
