@@ -16,13 +16,13 @@ import namenum_converter as conv
 
 
 def format_counter_list(counter_list):
-    final_counters = ''
-    for pair in counter_list:
-        just_name = pair[0]
-        just_num = pair[1]
-        full_counter = conv.fancify(just_name) + ': ' + str(just_num)
-        final_counters += (full_counter + ', ')
-    return final_counters[:-2]  # removes extra comma and space
+    formatted_counter = ''
+    for pair_ in counter_list:
+        just_name_ = pair_[0]
+        just_num_ = pair_[1]
+        full_counter = conv.fancify(just_name_) + ': ' + str(just_num_)
+        formatted_counter += (full_counter + ', ')
+    return formatted_counter[:-2]  # removes extra comma and space
 
 config = configparser.ConfigParser()  # load some settings
 with open('settings.ini', 'r') as configfile:
@@ -90,6 +90,7 @@ while True:
             low_precision = ast.literal_eval(config['MAIN']['low_precision'])
             process_allies = ast.literal_eval(config['MAIN']['process_allies'])
             include_allies_in_counters = ast.literal_eval(config['MAIN']['include_allies_in_counters'])
+            highlight_yourself = ast.literal_eval(config['MAIN']['highlight_yourself'])
             show_processing_text = ast.literal_eval(config['MAIN']['show_processing_text'])
             old_counter_list = ast.literal_eval(config['MAIN']['old_counter_list'])
             dev = ast.literal_eval(config['MAIN']['dev'])
@@ -269,9 +270,11 @@ while True:
                 dps_counters = []
                 tank_counters = []
                 heal_counters = []
+
                 for pair in sorted_counters:
                     just_name = pair[0]
                     just_num = pair[1]
+
                     if just_name not in allied_team or include_allies_in_counters:
                         if just_name in heroes_dps:
                             dps_counters.append(tuple((just_name, just_num)))
@@ -279,6 +282,10 @@ while True:
                             tank_counters.append(tuple((just_name, just_num)))
                         if just_name in heroes_heal:
                             heal_counters.append(tuple((just_name, just_num)))
+
+                    if just_name == conv.strip_dead(allied_team[0]):
+                        yourself = conv.fancify(just_name) + '): ' + str(just_num)
+
                 # no need to sort these, sorted_counters was already sorted (duh)
 
                 final_counters_dps = format_counter_list(dps_counters)
@@ -295,6 +302,10 @@ while True:
                 print('\n')
                 print("Counters (higher is better)")
                 print(final_counters)
+
+            if highlight_yourself:
+                print("You (" + yourself)
+
             # end getting counters
         elif not enemy_is_heroes:
             print("\nThe enemy team appears to be all loading or unknown, which counters can't be calculated from.")
