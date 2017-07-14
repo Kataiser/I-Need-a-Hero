@@ -22,3 +22,5 @@ Unzip to \Documents\Overwatch\ScreenShots (but not to \Documents\Overwatch\Scree
 **NOTE:** it auto deletes screenshots it deems to be of the tab menu, so keep that in mind. If this bothers you, change "delete_thresehold" in settings.ini to 100. 
 
 **Trello board:** https://trello.com/b/7pb5hLHX
+
+*All character portraits used are property of Blizzard Entertainment Inc. This program is not associated with nor endorsed by Blizzard Entertainment.*
