@@ -63,7 +63,7 @@ else:
     filenames = ['enemy1', 'enemy2', 'enemy3', 'enemy4', 'enemy5', 'enemy6']
 if dev:
     print('FYI, developer mode is on.')
-    dev_file = 'gameplay.jpg'
+    dev_file = 'testing/harder.jpg'
 
 inputs_before = os.listdir('Overwatch')  # a list of every file in the screenshots folder
 
@@ -174,7 +174,8 @@ while True:
                         learned_color = learned_color[0]
 
                         confidences[j] += abs(input_color - learned_color)
-                confidences[j] = 1 - (confidences[j] / 1434375)  # the maximum difference between two 76x76 images
+                #confidences[j] = 1 - (confidences[j] / 1434375)  # the maximum difference between two 76x76 images
+                confidences[j] = 1 - (confidences[j] / 256000)  # actually now it's just arbitrary
 
             if show_processing_text:
                 print("For " + filenames[h] + ":")
