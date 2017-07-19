@@ -24,12 +24,14 @@ def format_counter_list(counter_list):
         formatted_counter += (full_counter + ', ')
     return formatted_counter[:-2]  # removes extra comma and space
 
+
 config = configparser.ConfigParser()  # load some settings
 with open('settings.ini', 'r') as configfile:
     config.read('settings.ini')
     refresh_delay = float(config['MAIN']['refresh_delay'])
     process_allies = ast.literal_eval(config['MAIN']['process_allies'])
     dev = ast.literal_eval(config['MAIN']['dev'])
+
 
 heroes = ['ana', 'bastion', 'dva', 'genji', 'hanzo',
           'junkrat', 'lucio', 'mccree', 'mei', 'mercy',
@@ -61,7 +63,7 @@ else:
     filenames = ['enemy1', 'enemy2', 'enemy3', 'enemy4', 'enemy5', 'enemy6']
 if dev:
     print('FYI, developer mode is on.')
-    dev_file = 'cropit.jpg'
+    dev_file = 'gameplay.jpg'
 
 inputs_before = os.listdir('Overwatch')  # a list of every file in the screenshots folder
 
@@ -132,25 +134,30 @@ while True:
         enemy5 = screenshot.crop((1210, 279, 1286, 355))
         enemy6 = screenshot.crop((1402, 279, 1478, 355))
 
-        ally1.save('output/ally1.png')
-        ally2.save('output/ally2.png')
-        ally3.save('output/ally3.png')
-        ally4.save('output/ally4.png')
-        ally5.save('output/ally5.png')
-        ally6.save('output/ally6.png')
-        enemy1.save('output/enemy1.png')
-        enemy2.save('output/enemy2.png')
-        enemy3.save('output/enemy3.png')
-        enemy4.save('output/enemy4.png')
-        enemy5.save('output/enemy5.png')
-        enemy6.save('output/enemy6.png')
+        filenames_opened = []
+        if process_allies:
+            filenames_opened.append(ally1)
+            filenames_opened.append(ally2)
+            filenames_opened.append(ally3)
+            filenames_opened.append(ally4)
+            filenames_opened.append(ally5)
+            filenames_opened.append(ally6)
+        filenames_opened.append(enemy1)
+        filenames_opened.append(enemy2)
+        filenames_opened.append(enemy3)
+        filenames_opened.append(enemy4)
+        filenames_opened.append(enemy5)
+        filenames_opened.append(enemy6)
 
         allied_team = []
         enemy_team = []
         total_confidence = []
+        mask = Image.open('mask.png').convert('RGBA')  # used to ignore metal winged BS
 
         for h in range(0, len(filenames)):  # every ally or enemy
-            unknown = Image.open('output/' + filenames[h] + '.png').load()
+            unknown_unloaded = filenames_opened[h]
+            unknown_unloaded.paste(mask, (0, 0), mask)  # ...until I put on the mask
+            unknown = unknown_unloaded.load()
 
             confidences = []
             for i in heroes:
@@ -188,18 +195,6 @@ while True:
                 allied_team.append(likely_name)  # builds the team lists
             elif 'enemy' in filenames[h]:
                 enemy_team.append(likely_name)
-
-            prev_name = likely_name  # find the second most likely hero
-            likely_name = ''
-            likely_num = 0
-            for i in range(0, len(confidences)):
-                if confidences[i] > likely_num and heroes[i] != prev_name:
-                    likely_num = confidences[i]
-                    likely_name = heroes[i]
-            print_conf = int(likely_num * 100)
-            if show_processing_text:
-                print("Second most is " + likely_name
-                      + ", with a confidence of " + str(print_conf) + "%")
 
         print('\n')
 
