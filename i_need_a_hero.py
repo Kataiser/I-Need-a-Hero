@@ -25,12 +25,22 @@ def format_counter_list(counter_list):
     return formatted_counter[:-2]  # removes extra comma and space
 
 
+# defaults
+
+refresh_delay = 0.5
+process_allies = True
+dev = False
+
 config = configparser.ConfigParser()  # load some settings
-with open('settings.ini', 'r') as configfile:
-    config.read('settings.ini')
-    refresh_delay = float(config['MAIN']['refresh_delay'])
-    process_allies = ast.literal_eval(config['MAIN']['process_allies'])
-    dev = ast.literal_eval(config['MAIN']['dev'])
+
+try:
+    with open('inah-settings.ini', 'r') as configfile:
+        config.read('inah-settings.ini')
+        refresh_delay = float(config['MAIN']['refresh_delay'])
+        process_allies = ast.literal_eval(config['MAIN']['process_allies'])
+        dev = ast.literal_eval(config['MAIN']['dev'])
+except FileNotFoundError as error:
+    print("Couldn't load inah-settings.ini:", error)
 
 
 heroes = ['ana', 'bastion', 'dva', 'genji', 'hanzo',
@@ -63,7 +73,7 @@ else:
     filenames = ['enemy1', 'enemy2', 'enemy3', 'enemy4', 'enemy5', 'enemy6']
 if dev:
     print('FYI, developer mode is on.')
-    dev_file = 'testing/harder.jpg'
+    dev_file = 'testing/gameplay2.jpg'
 
 inputs_before = os.listdir('Overwatch')  # a list of every file in the screenshots folder
 
@@ -83,20 +93,36 @@ while True:
 
         process_time_start = time.time()
 
-        config = configparser.ConfigParser()  # load all settings
-        with open('settings.ini', 'r') as configfile:
-            config.read('settings.ini')
-            delete_thresehold = int(config['MAIN']['delete_thresehold'])
-            process_threshold = int(config['MAIN']['process_threshold'])
-            refresh_delay = float(config['MAIN']['refresh_delay'])
-            low_precision = ast.literal_eval(config['MAIN']['low_precision'])
-            process_allies = ast.literal_eval(config['MAIN']['process_allies'])
-            include_allies_in_counters = ast.literal_eval(config['MAIN']['include_allies_in_counters'])
-            highlight_yourself = ast.literal_eval(config['MAIN']['highlight_yourself'])
-            show_processing_text = ast.literal_eval(config['MAIN']['show_processing_text'])
-            old_counter_list = ast.literal_eval(config['MAIN']['old_counter_list'])
-            dev = ast.literal_eval(config['MAIN']['dev'])
-            preview = ast.literal_eval(config['MAIN']['preview'])
+        # defaults
+        delete_thresehold = 80
+        process_threshold = 70
+        refresh_delay = 0.5
+        low_precision = False
+        process_allies = True
+        include_allies_in_counters = True
+        highlight_yourself = False
+        show_processing_text = False
+        old_counter_list = False
+        dev = False
+        preview = False
+
+        try:
+            config = configparser.ConfigParser()  # load all settings
+            with open('inah-settings.ini', 'r') as configfile:
+                config.read('inah-settings.ini')
+                delete_thresehold = int(config['MAIN']['delete_thresehold'])
+                process_threshold = int(config['MAIN']['process_threshold'])
+                refresh_delay = float(config['MAIN']['refresh_delay'])
+                low_precision = ast.literal_eval(config['MAIN']['low_precision'])
+                process_allies = ast.literal_eval(config['MAIN']['process_allies'])
+                include_allies_in_counters = ast.literal_eval(config['MAIN']['include_allies_in_counters'])
+                highlight_yourself = ast.literal_eval(config['MAIN']['highlight_yourself'])
+                show_processing_text = ast.literal_eval(config['MAIN']['show_processing_text'])
+                old_counter_list = ast.literal_eval(config['MAIN']['old_counter_list'])
+                dev = ast.literal_eval(config['MAIN']['dev'])
+                preview = ast.literal_eval(config['MAIN']['preview'])
+        except FileNotFoundError as error:
+            print("Couldn't load inah-settings.ini:", error)
 
         inputs_diff = list(set(os.listdir('Overwatch')) - set(inputs_before))
         current_filename = str(inputs_diff)[2:-2]  # removes brackets and quotes
@@ -104,6 +130,7 @@ while True:
 
         if not dev:
             try:
+                time.sleep(0.1)  # bug "fix"
                 screenshot = Image.open('Overwatch/' + inputs_diff[0]).resize((1920, 1080))
             except OSError:
                 print("This doesn't seem to be an image file.")
