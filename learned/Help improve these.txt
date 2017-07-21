@@ -6,6 +6,6 @@ Some of these aren't very good. If you want to help improve them (requires compu
 4. Run them through the extractor (or the bulk one)
 5. Add the portraits to the learning folder with proper and unique names
 6. Run learning2learned.py
-7. Submit a push request with the updated learned folder
+7. Submit a pull request with the updated learned folder
 
 If something goes wrong, contact me.

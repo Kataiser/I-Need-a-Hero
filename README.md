@@ -17,7 +17,7 @@ Uses image recognition, based on an automatically loaded screenshot, to suggest 
 **Installation and running instructions:**
 Unzip to \Documents\Overwatch\ScreenShots (but not to \Documents\Overwatch\ScreenShots\Overwatch) and launch setup.bat (double click). To run, launch run.bat, move the windows to a second monitor (if you have one), then hold tab and press the "print screen" button once in game. Only works properly once the enemies are actually displayed.
 
-**Requirements:** Python 3.6 (https://www.python.org/downloads). Libraries are downloaded by setup.bat.
+**Requirements:** Python 3.6 or newer (https://www.python.org/downloads). Libraries are downloaded by setup.bat.
 
 **NOTE:** it auto deletes screenshots it deems to be of the tab menu, so keep that in mind. If this bothers you, change "delete_thresehold" in settings.ini to 100. 
 
