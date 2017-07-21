@@ -73,7 +73,7 @@ else:
     filenames = ['enemy1', 'enemy2', 'enemy3', 'enemy4', 'enemy5', 'enemy6']
 if dev:
     print('FYI, developer mode is on.')
-    dev_file = 'testing/gameplay2.jpg'
+    dev_file = 'testing/harder.jpg'
 
 inputs_before = os.listdir('Overwatch')  # a list of every file in the screenshots folder
 
@@ -126,6 +126,8 @@ while True:
 
         inputs_diff = list(set(os.listdir('Overwatch')) - set(inputs_before))
         current_filename = str(inputs_diff)[2:-2]  # removes brackets and quotes
+        if dev:
+            current_filename = dev_file
         print("\nProcessing " + current_filename + " at " + str(time.strftime('%I:%M:%S %p', time.localtime())))
 
         if not dev:
