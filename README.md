@@ -19,7 +19,7 @@ Unzip to \Documents\Overwatch\ScreenShots (but not to \Documents\Overwatch\Scree
 
 **Requirements:** Python 3.6 or newer (https://www.python.org/downloads). Libraries are downloaded by setup.bat.
 
-**NOTE:** it auto deletes screenshots it deems to be of the tab menu, so keep that in mind. If this bothers you, change "delete_thresehold" in settings.ini to 100. 
+**NOTE:** it auto deletes screenshots it deems to be of the tab menu, so keep that in mind. If this bothers you, change "delete_thresehold" in inah-settings.ini to 100. 
 
 **Trello board:** https://trello.com/b/7pb5hLHX
 
