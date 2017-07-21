@@ -10,18 +10,19 @@ def average_images(*arg):
     print("From " + arg[0] + " to " + arg[-1])
 
     if input_num == 1:
-        return Image.open(arg[0])
+        output = Image.open(arg[0])
+    else:
+        opened_images = []
+        for filename in arg:
+            opened_images.append(Image.open(filename).convert('RGBA'))
+            opened_images.append(Image.open(filename).convert('RGBA'))
 
-    opened_images = []
-    for filename in arg:
-        opened_images.append(Image.open(filename).convert('RGBA'))
+        output = Image.blend(opened_images[0], opened_images[1], 0.5)
 
-    output = Image.blend(opened_images[0], opened_images[1], 0.5)
-
-    if input_num > 2:
-        for inputs in range(2, input_num):
-            alpha = 1 / (inputs + 1)
-            output = Image.blend(output, opened_images[inputs], alpha)
+        if input_num > 2:
+            for inputs in range(2, input_num):
+                alpha = 1 / (inputs + 1)
+                output = Image.blend(output, opened_images[inputs], alpha)
 
     mask = Image.open('mask.png').convert('RGBA')
     output.paste(mask, (0, 0), mask)
@@ -36,7 +37,8 @@ heroes = ['ana', 'bastion', 'dva', 'genji', 'hanzo',
           'luciodead', 'mccreedead', 'meidead', 'pharahdead', 'reaperdead',
           'roadhogdead', 'soldierdead', 'sombradead', 'torbjorndead', 'tracerdead',
           'zaryadead', 'zenyattadead', 'hanzodead', 'mercydead', 'orisadead',
-          'reinhardtdead', 'symmetradead', 'widowmakerdead', 'winstondead', 'orisa']
+          'reinhardtdead', 'symmetradead', 'widowmakerdead', 'winstondead', 'orisa',
+          'doomfist', 'doomfistdead']
 
 learning_files = os.listdir('learning')
 
