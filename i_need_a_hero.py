@@ -1,15 +1,10 @@
 import loading
 
+from PIL import Image
 import os
 import time
 import configparser
 import ast
-
-try:
-    from PIL import Image
-except (ImportError, ModuleNotFoundError):
-    print("You didn't run setup.bat first! Try again after you do that.")
-    raise SystemExit
 
 from get_counters import get_counter  # naming is hard
 import namenum_converter as conv
@@ -26,14 +21,12 @@ def format_counter_list(counter_list):
 
 
 # defaults
-
 refresh_delay = 0.5
 process_allies = True
 dev = False
 
-config = configparser.ConfigParser()  # load some settings
-
 try:
+    config = configparser.ConfigParser()  # load some settings
     with open('inah-settings.ini', 'r') as configfile:
         config.read('inah-settings.ini')
         refresh_delay = float(config['MAIN']['refresh_delay'])
@@ -41,6 +34,7 @@ try:
         dev = ast.literal_eval(config['MAIN']['dev'])
 except FileNotFoundError as error:
     print("Couldn't load inah-settings.ini:", error)
+    raise SystemExit
 
 
 heroes = ['ana', 'bastion', 'dva', 'genji', 'hanzo',
@@ -75,19 +69,20 @@ if dev:
     print('FYI, developer mode is on.')
     dev_file = 'testing/harder.jpg'
 
-inputs_before = os.listdir('Overwatch')  # a list of every file in the screenshots folder
+screenshots_path = os.path.expanduser('~\Documents\Overwatch\ScreenShots\Overwatch')
+inputs_before = os.listdir(screenshots_path)  # a list of every file in the screenshots folder
 
 loading.done()
 
 while True:
     time.sleep(refresh_delay)  # to stop high cpu usage while waiting
     continue_ = False
-    inputs_after = os.listdir('Overwatch')
+    inputs_after = os.listdir(screenshots_path)
     if len(inputs_after) > len(inputs_before):  # if a file is added
         continue_ = True
     if len(inputs_after) < len(inputs_before):  # if a file is removed
         continue_ = False
-        inputs_before = os.listdir('Overwatch')
+        inputs_before = os.listdir(screenshots_path)
     if continue_ or dev:
         # starting analysis
 
@@ -123,8 +118,9 @@ while True:
                 preview = ast.literal_eval(config['MAIN']['preview'])
         except FileNotFoundError as error:
             print("Couldn't load inah-settings.ini:", error)
+            raise SystemExit
 
-        inputs_diff = list(set(os.listdir('Overwatch')) - set(inputs_before))
+        inputs_diff = list(set(os.listdir(screenshots_path)) - set(inputs_before))
         current_filename = str(inputs_diff)[2:-2]  # removes brackets and quotes
         if dev:
             current_filename = dev_file
@@ -133,10 +129,10 @@ while True:
         if not dev:
             try:
                 time.sleep(0.1)  # bug "fix"
-                screenshot = Image.open('Overwatch/' + inputs_diff[0]).resize((1920, 1080))
+                screenshot = Image.open(screenshots_path + '/' + inputs_diff[0]).resize((1920, 1080))
             except OSError:
                 print("This doesn't seem to be an image file.")
-                inputs_before = os.listdir('Overwatch')  # resets screenshot folder list
+                inputs_before = os.listdir(screenshots_path)  # resets screenshot folder list
                 continue
         else:
             screenshot = Image.open(dev_file).resize((1920, 1080))
@@ -338,7 +334,7 @@ while True:
         print('\n')  # managing these is hard
 
         if total_conf_average > delete_thresehold and not dev:  # deletes screenshot once done
-            os.remove('Overwatch/' + inputs_diff[0])  # doesn't recycle, fyi
+            os.remove(screenshots_path + '/' + inputs_diff[0])  # doesn't recycle, fyi
             print("Deleted " + current_filename + ' (needed ' + str(delete_thresehold)
                   + '% confidence, got ' + str(total_conf_average) + '%)')
         else:
@@ -347,7 +343,7 @@ while True:
             if delete_thresehold >= 100:
                 print("The delete threshold is currently 100%, which means that even tab menu screenshots aren't"
                       " deleted. Be sure to clean the screenshots folder out manually every now and then.")
-        inputs_before = os.listdir('Overwatch')  # resets screenshot folder list
+        inputs_before = os.listdir(screenshots_path)  # resets screenshot folder list
 
         if dev:
             raise SystemExit

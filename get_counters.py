@@ -1,9 +1,4 @@
-try:
-    import openpyxl
-except (ImportError, ModuleNotFoundError):
-    print("You didn't run setup.bat first! Try again after you do that.")
-    raise SystemExit
-
+import openpyxl
 import namenum_converter as conv
 
 
