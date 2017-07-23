@@ -140,7 +140,10 @@ while True:
         if preview:
             screenshot.save('preview.png')
         else:
-            os.remove("preview.png")
+            try:
+                os.remove("preview.png")
+            except FileNotFoundError:
+                pass
 
         if low_precision:
             step = 2  # skips every other pixel
