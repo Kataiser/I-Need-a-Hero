@@ -16,9 +16,7 @@ Uses image recognition, based on an automatically loaded screenshot, to suggest 
 **Download:** https://github.com/Kataiser/I-Need-a-Hero/releases
 
 **Installation and running instructions:**
-Unzip anywhere. To run, launch "I Need a Hero.exe", move the window to a second monitor (if you have one), then hold tab and press the "print screen" button once in game. Only works properly once the enemies are actually displayed.
-
-**Requirements:** Python 3.6 or newer (https://www.python.org/downloads). Libraries are downloaded by setup.bat.
+Unzip anywhere. To run, double click "I Need a Hero", move the window to a second monitor (if you have one), then hold tab and press the "print screen" button once in game. Only works properly once the enemies are actually displayed.
 
 **NOTE:** it auto deletes screenshots it deems to be of the tab menu, so keep that in mind. If this bothers you, change "delete_thresehold" in inah-settings.ini to 100. 
 
