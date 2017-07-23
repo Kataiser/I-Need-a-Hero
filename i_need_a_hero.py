@@ -67,7 +67,7 @@ else:
     filenames = ['enemy1', 'enemy2', 'enemy3', 'enemy4', 'enemy5', 'enemy6']
 if dev:
     print('FYI, developer mode is on.')
-    dev_file = 'testing/gameplay.jpg'
+    dev_file = 'testing/harder.jpg'
 
 screenshots_path = os.path.expanduser('~\Documents\Overwatch\ScreenShots\Overwatch')
 inputs_before = os.listdir(screenshots_path)  # a list of every file in the screenshots folder
@@ -138,7 +138,9 @@ while True:
             screenshot = Image.open(dev_file).resize((1920, 1080))
 
         if preview:
-            screenshot.resize((480, 270)).show()
+            screenshot.save('preview.png')
+        else:
+            os.remove("preview.png")
 
         if low_precision:
             step = 2  # skips every other pixel
