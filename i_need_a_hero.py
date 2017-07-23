@@ -143,7 +143,6 @@ while True:
         if low_precision:
             step = 2  # skips every other pixel
             divisor = 64000  # scary magic math
-            process_threshold = int((process_threshold + 100) / 2)
         else:
             step = 1
             divisor = 256000
