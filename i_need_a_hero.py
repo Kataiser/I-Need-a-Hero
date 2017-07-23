@@ -95,7 +95,7 @@ while True:
         low_precision = False
         process_allies = True
         include_allies_in_counters = True
-        highlight_yourself = False
+        highlight_yourself = True
         show_processing_text = False
         old_counter_list = False
         dev = False
