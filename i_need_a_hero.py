@@ -67,7 +67,7 @@ else:
     filenames = ['enemy1', 'enemy2', 'enemy3', 'enemy4', 'enemy5', 'enemy6']
 if dev:
     print('FYI, developer mode is on.')
-    dev_file = 'testing/harder.jpg'
+    dev_file = 'testing/gameplay.jpg'
 
 screenshots_path = os.path.expanduser('~\Documents\Overwatch\ScreenShots\Overwatch')
 inputs_before = os.listdir(screenshots_path)  # a list of every file in the screenshots folder
@@ -142,9 +142,11 @@ while True:
 
         if low_precision:
             step = 2  # skips every other pixel
-            process_threshold = int((process_threshold + 100) / 2)  # doesn't quite correspond in practice,
-        else:                                                       # but it's close enough
+            divisor = 64000  # scary magic math
+            process_threshold = int((process_threshold + 100) / 2)
+        else:
             step = 1
+            divisor = 256000
 
         ally1 = screenshot.crop((443, 584, 519, 660))
         ally2 = screenshot.crop((634, 584, 710, 660))
@@ -199,8 +201,7 @@ while True:
                         learned_color = learned_color[0]
 
                         confidences[j] += abs(input_color - learned_color)
-                #confidences[j] = 1 - (confidences[j] / 1434375)  # the maximum difference between two 76x76 images
-                confidences[j] = 1 - (confidences[j] / 256000)  # actually now it's just arbitrary
+                confidences[j] = 1 - (confidences[j] / divisor)
 
             if show_processing_text:
                 print("For " + filenames[h] + ":")
