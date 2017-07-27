@@ -28,12 +28,13 @@ table_long = {'unknown': -1, 'loading': -1, 'ana': 0, 'bastion': 1, 'dva': 2,
               'roadhogdead': 13, 'soldierdead': 14, 'sombradead': 15, 'torbjorndead': 17, 'tracerdead': 18,
               'zaryadead': 21, 'zenyattadead': 22, 'hanzodead': 4, 'mercydead': 9, 'orisadead': 23,
               'reinhardtdead': 12, 'symmetradead': 16, 'widowmakerdead': 19, 'winstondead': 20, 'orisa': 23,
-              '': -1}
+              '': -1, 'doomfist': 24, 'doomfistdead': 24}
 
 table_short = {'Ana': 0, 'Bastion': 1, 'D.Va': 2, 'Genji': 3, 'Hanzo': 4,
                'Junkrat': 5, 'Lucio': 6, 'McCree': 7, 'Mei': 8, 'Mercy': 9,
                'Pharah': 10, 'Reaper': 11, 'Reinhardt': 12, 'Roadhog': 13, 'Soldier 76': 14,
                'Sombra': 15, 'Symmetra': 16, 'Torbjorn': 17, 'Tracer': 18, 'Widowmaker': 19,
-               'Winston': 20, 'Zarya': 21, 'Zenyatta': 22, 'Orisa': 23, '': -1}
+               'Winston': 20, 'Zarya': 21, 'Zenyatta': 22, 'Orisa': 23, '': -1,
+               'Doomfist': 24}
 
 table_reversed = {v: k for k, v in table_short.items()}  # again, wtf

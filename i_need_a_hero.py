@@ -46,11 +46,12 @@ heroes = ['ana', 'bastion', 'dva', 'genji', 'hanzo',
           'luciodead', 'mccreedead', 'meidead', 'pharahdead', 'reaperdead',
           'roadhogdead', 'soldierdead', 'sombradead', 'torbjorndead', 'tracerdead',
           'zaryadead', 'zenyattadead', 'hanzodead', 'mercydead', 'orisadead',
-          'reinhardtdead', 'symmetradead', 'widowmakerdead', 'winstondead', 'orisa']
+          'reinhardtdead', 'symmetradead', 'widowmakerdead', 'winstondead', 'orisa',
+          'doomfist', 'doomfistdead']
 
 heroes_dps = ['bastion', 'genji', 'hanzo', 'junkrat', 'mccree',
               'mei', 'pharah', 'reaper', 'soldier', 'sombra',
-              'symmetra', 'torbjorn', 'tracer', 'widowmaker']
+              'symmetra', 'torbjorn', 'tracer', 'widowmaker', 'doomfist']
 heroes_tank = ['dva', 'reinhardt', 'roadhog', 'winston', 'zarya', 'orisa']
 heroes_heal = ['ana', 'lucio', 'mercy', 'zenyatta']
 
