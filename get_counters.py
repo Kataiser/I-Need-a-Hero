@@ -23,7 +23,7 @@ sheet = wb.get_sheet_by_name('Sheet1')
 
 hero_reference = []
 
-for i in range(2, 26):
+for i in range(2, 27):
     to_add = sheet.cell(row=i, column=1).value.lower()  # builds list of heroes
     hero_reference.append(to_add)
 
