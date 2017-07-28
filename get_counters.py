@@ -10,6 +10,9 @@ def get_counter(hero1, hero2):
 
     x = conv.strip_dead(hero1)
     y = conv.strip_dead(hero2)
+    if x == y:
+        return 0
+
     posx = hero_reference.index(x) + 2  # because python lists start at 0
     posy = hero_reference.index(y) + 2  # and the counter table starts at 2
 

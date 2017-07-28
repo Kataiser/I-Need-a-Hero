@@ -68,7 +68,7 @@ else:
     filenames = ['enemy1', 'enemy2', 'enemy3', 'enemy4', 'enemy5', 'enemy6']
 if dev:
     print('FYI, developer mode is on.')
-    dev_file = 'testing/doomfists.jpg'
+    dev_file = 'testing/720p.jpg'
 
 screenshots_path = os.path.expanduser('~\Documents\Overwatch\ScreenShots\Overwatch')
 inputs_before = os.listdir(screenshots_path)  # a list of every file in the screenshots folder
