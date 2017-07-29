@@ -345,6 +345,13 @@ while True:
             if highlight_yourself:
                 print("You (" + yourself)
 
+            if not any(x in allied_team for x in heroes_dps):
+                print("Your team doesn't have any DPS heroes on it!")
+            if not any(x in allied_team for x in heroes_tank):
+                print("Your team doesn't have any tank heroes on it!")
+            if not any(x in allied_team for x in heroes_heal):
+                print("Your team doesn't have any healers on it!")
+
             # end getting counters
         elif not enemy_is_heroes:
             print("\nThe enemy team appears to be all loading or unknown, which counters can't be calculated from.")
