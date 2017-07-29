@@ -1,4 +1,4 @@
-from PIL import Image
+from PIL import Image, ImageFilter
 import os
 
 import namenum_converter as conv
@@ -25,6 +25,7 @@ def average_images(*arg):
                 output = Image.blend(output, opened_images[inputs], alpha)
 
     mask = Image.open('mask.png').convert('RGBA')
+    output = output.filter(ImageFilter.GaussianBlur(radius=2))
     output.paste(mask, (0, 0), mask)
     return output.convert('RGB')
 

@@ -208,8 +208,7 @@ while True:
                 confidences.append(0)  # makes a hero-long list of zeroes
 
             for j in range(0, len(heroes)):  # the image recognition magic
-                learned_image = Image.open('learned/' + heroes[j] + '.png')  # inefficiency yay
-                learned_image = learned_image.filter(ImageFilter.GaussianBlur(radius=2)).load()
+                learned_image = Image.open('learned/' + heroes[j] + '.png').load()  # inefficiency yay
                 for x in range(0, 75, step):
                     for y in range(0, 75, step):
                         input_color = unknown[x, y]
