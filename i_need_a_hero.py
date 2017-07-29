@@ -1,6 +1,6 @@
 import loading
 
-from PIL import Image
+from PIL import Image, ImageFilter
 import os
 import time
 import configparser
@@ -68,7 +68,7 @@ else:
     filenames = ['enemy1', 'enemy2', 'enemy3', 'enemy4', 'enemy5', 'enemy6']
 if dev:
     print('FYI, developer mode is on.')
-    dev_file = 'testing/720p.jpg'
+    dev_file = 'testing/cropit.jpg'
 
 screenshots_path = os.path.expanduser('~\Documents\Overwatch\ScreenShots\Overwatch')
 inputs_before = os.listdir(screenshots_path)  # a list of every file in the screenshots folder
@@ -130,13 +130,24 @@ while True:
         if not dev:
             try:
                 time.sleep(0.1)  # bug "fix"
-                screenshot = Image.open(screenshots_path + '/' + inputs_diff[0]).resize((1920, 1080))
+                screenshot = Image.open(screenshots_path + '/' + inputs_diff[0])
             except OSError:
                 print("This doesn't seem to be an image file.")
                 inputs_before = os.listdir(screenshots_path)  # resets screenshot folder list
                 continue
         else:
-            screenshot = Image.open(dev_file).resize((1920, 1080))
+            screenshot = Image.open(dev_file)
+
+        width, height = screenshot.size
+        aspect_ratio = width / height
+        if aspect_ratio > 2:  # the aspect ratio the user is running at is 21:9
+            screenshot = screenshot.resize((2560, 1080))
+            screenshot = screenshot.crop((315, 0, 2235, 1080))
+        elif aspect_ratio < 1.7:  # aspect ratio is 16:10
+            screenshot = screenshot.resize((1920, 1200))
+            screenshot = screenshot.crop((0, 60, 1920, 1140))
+        else:  # aspect ratio is 16:10
+            screenshot = screenshot.resize((1920, 1080))
 
         if preview:
             screenshot.save('preview.png')
@@ -188,6 +199,7 @@ while True:
 
         for h in range(0, len(filenames)):  # every ally or enemy
             unknown_unloaded = filenames_opened[h]
+            unknown_unloaded = unknown_unloaded.filter(ImageFilter.GaussianBlur(radius=2))
             unknown_unloaded.paste(mask, (0, 0), mask)  # ...until I put on the mask
             unknown = unknown_unloaded.load()
 
@@ -196,7 +208,8 @@ while True:
                 confidences.append(0)  # makes a hero-long list of zeroes
 
             for j in range(0, len(heroes)):  # the image recognition magic
-                learned_image = Image.open('learned/' + heroes[j] + '.png').load()  # inefficiency yay
+                learned_image = Image.open('learned/' + heroes[j] + '.png')  # inefficiency yay
+                learned_image = learned_image.filter(ImageFilter.GaussianBlur(radius=2)).load()
                 for x in range(0, 75, step):
                     for y in range(0, 75, step):
                         input_color = unknown[x, y]
