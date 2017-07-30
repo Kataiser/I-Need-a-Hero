@@ -351,11 +351,14 @@ while True:
             if highlight_yourself:
                 print("You (" + yourself)
 
-            if not any(x in allied_team for x in heroes_dps):
+            allied_team_alive = []
+            for possibly_dead_hero in allied_team:
+                allied_team_alive.append(conv.strip_dead(possibly_dead_hero))
+            if not any(x in allied_team_alive for x in heroes_dps):
                 print("Your team doesn't have any DPS heroes on it!")
-            if not any(x in allied_team for x in heroes_tank):
+            if not any(x in allied_team_alive for x in heroes_tank):
                 print("Your team doesn't have any tank heroes on it!")
-            if not any(x in allied_team for x in heroes_heal):
+            if not any(x in allied_team_alive for x in heroes_heal):
                 print("Your team doesn't have any healers on it!")
 
             # end getting counters
