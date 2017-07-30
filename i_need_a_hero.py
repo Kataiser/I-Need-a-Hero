@@ -73,6 +73,12 @@ if dev:
 screenshots_path = os.path.expanduser('~\Documents\Overwatch\ScreenShots\Overwatch')
 inputs_before = os.listdir(screenshots_path)  # a list of every file in the screenshots folder
 
+learned_images = {}
+for learned_path in os.listdir('learned'):
+    if 'png' in learned_path:
+        learned = Image.open('learned/' + learned_path).load()
+        learned_images[learned_path[:-4]] = learned
+
 loading.done()
 
 while True:
@@ -208,7 +214,7 @@ while True:
                 confidences.append(0)  # makes a hero-long list of zeroes
 
             for j in range(0, len(heroes)):  # the image recognition magic
-                learned_image = Image.open('learned/' + heroes[j] + '.png').load()  # inefficiency yay
+                learned_image = learned_images[heroes[j]]
                 for x in range(0, 75, step):
                     for y in range(0, 75, step):
                         input_color = unknown[x, y]
