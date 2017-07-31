@@ -1,6 +1,7 @@
 import loading
 
 from PIL import Image, ImageFilter
+from logbook import Logger, FileHandler
 import os
 import time
 import configparser
@@ -19,6 +20,9 @@ def format_counter_list(counter_list):
         formatted_counter += (full_counter + ', ')
     return formatted_counter[:-2]  # removes extra comma and space
 
+
+FileHandler('inah-logger.log').push_application()
+log = Logger('inah-log')
 
 # defaults
 refresh_delay = 0.5
