@@ -1,7 +1,6 @@
 import loading
 
 from PIL import Image, ImageFilter
-from logbook import Logger, FileHandler
 import os
 import time
 import configparser
@@ -9,6 +8,7 @@ import ast
 
 from get_counters import get_counter  # naming is hard
 import namenum_converter as conv
+import customlogger as log
 
 
 def format_counter_list(counter_list):
@@ -20,9 +20,7 @@ def format_counter_list(counter_list):
         formatted_counter += (full_counter + ', ')
     return formatted_counter[:-2]  # removes extra comma and space
 
-
-FileHandler('inah-logger.log').push_application()
-log = Logger('inah-log')
+log.info("START")
 
 # defaults
 refresh_delay = 0.5
@@ -36,10 +34,13 @@ try:
         refresh_delay = float(config['MAIN']['refresh_delay'])
         process_allies = ast.literal_eval(config['MAIN']['process_allies'])
         dev = ast.literal_eval(config['MAIN']['dev'])
+        settings_raw = configfile.readlines()
+        settings_raw = settings_raw[0:12]
+        log.info("Settings: " + str(settings_raw))
 except FileNotFoundError as error:
-    print("Couldn't load inah-settings.ini:", error)
-    raise SystemExit
-
+    settings_error = "Couldn't load inah-settings.ini (" + str(error) + ")"
+    print(settings_error, ", reverting to default settings")
+    log.error(settings_error)
 
 heroes = ['ana', 'bastion', 'dva', 'genji', 'hanzo',
           'junkrat', 'lucio', 'mccree', 'mei', 'mercy',
@@ -72,18 +73,24 @@ else:
     filenames = ['enemy1', 'enemy2', 'enemy3', 'enemy4', 'enemy5', 'enemy6']
 if dev:
     print('FYI, developer mode is on.')
-    dev_file = 'testing/cropit.jpg'
+    dev_file = 'testing/harder.jpg'
+    log.debug("Developer mode is on, dev_file is " + dev_file)
 
 screenshots_path = os.path.expanduser('~\Documents\Overwatch\ScreenShots\Overwatch')
+log.info("screenshots_path is " + screenshots_path)
 inputs_before = os.listdir(screenshots_path)  # a list of every file in the screenshots folder
+log.info('The screenshots folder has ' + str(len(inputs_before)) + " images")
 
+# builds a cache of learned images
 learned_images = {}
 for learned_path in os.listdir('learned'):
     if 'png' in learned_path:
         learned = Image.open('learned/' + learned_path).load()
         learned_images[learned_path[:-4]] = learned
+log.info("The learned folder has " + str(len(learned_images)) + " images")
 
-loading.done()
+loading_time = loading.done()
+log.info("Loaded in " + str(loading_time) + " seconds")
 
 while True:
     time.sleep(refresh_delay)  # to stop high cpu usage while waiting
@@ -96,6 +103,7 @@ while True:
         inputs_before = os.listdir(screenshots_path)
     if continue_ or dev:
         # starting analysis
+        log.info("START LOOP")
 
         process_time_start = time.time()
 
@@ -127,44 +135,60 @@ while True:
                 old_counter_list = ast.literal_eval(config['MAIN']['old_counter_list'])
                 dev = ast.literal_eval(config['MAIN']['dev'])
                 preview = ast.literal_eval(config['MAIN']['preview'])
+                settings_raw = configfile.readlines()
+                settings_raw = settings_raw[0:12]
+                log.info("Settings: " + str(settings_raw))
         except FileNotFoundError as error:
-            print("Couldn't load inah-settings.ini:", error)
-            raise SystemExit
+            settings_error = "Couldn't load inah-settings.ini (" + str(error) + ")"
+            print(settings_error, ", reverting to default settings")
+            log.error(settings_error)
 
         inputs_diff = list(set(os.listdir(screenshots_path)) - set(inputs_before))
+        log.info("inputs_diff is " + str(inputs_diff))
         current_filename = str(inputs_diff)[2:-2]  # removes brackets and quotes
         if dev:
             current_filename = dev_file
         print("\nProcessing " + current_filename + " at " + str(time.strftime('%I:%M:%S %p', time.localtime())))
+        log.info("Processing " + current_filename)
 
         if not dev:
             try:
                 time.sleep(0.1)  # bug "fix"
                 screenshot = Image.open(screenshots_path + '/' + inputs_diff[0])
-            except OSError:
+                log.info("Screenshot opened successfully: " + str(screenshot))
+            except OSError as error:
                 print("This doesn't seem to be an image file.")
                 inputs_before = os.listdir(screenshots_path)  # resets screenshot folder list
+                log.error("Couldn't open screenshot file: " + str(error))
                 continue
         else:
             screenshot = Image.open(dev_file)
+            log.debug("Dev screenshot opened successfully: " + str(screenshot))
 
         width, height = screenshot.size
         aspect_ratio = width / height
+        log.info("Aspect ratio is {} ({} / {})".format(aspect_ratio, width, height))
         if aspect_ratio > 2:  # the aspect ratio the user is running at is 21:9
+            log.info("Formatted aspect ratio is closest to 21:9, processing accordingly")
             screenshot = screenshot.resize((2560, 1080))
             screenshot = screenshot.crop((315, 0, 2235, 1080))
         elif aspect_ratio < 1.7:  # aspect ratio is 16:10
+            log.info("Formatted aspect ratio is closest to 16:10, processing accordingly")
             screenshot = screenshot.resize((1920, 1200))
             screenshot = screenshot.crop((0, 60, 1920, 1140))
-        else:  # aspect ratio is 16:10
+        else:  # aspect ratio is 16:9
+            log.info("Formatted aspect ratio is closest to 16:9, processing accordingly")
             screenshot = screenshot.resize((1920, 1080))
 
         if preview:
             screenshot.save('preview.png')
+            log.info("Saved preview")
         else:
             try:
                 os.remove("preview.png")
+                log.info("Deleted preview")
             except FileNotFoundError:
+                log.info("No preview to delete")
                 pass
 
         if low_precision:
@@ -206,7 +230,9 @@ while True:
         enemy_team = []
         total_confidence = []
         mask = Image.open('mask.png').convert('RGBA')  # used to ignore metal winged BS
+        log.info("Mask opened: " + str(mask))
 
+        log.info("Starting image recognition")
         for h in range(0, len(filenames)):  # every ally or enemy
             unknown_unloaded = filenames_opened[h]
             unknown_unloaded = unknown_unloaded.filter(ImageFilter.GaussianBlur(radius=2))
@@ -254,6 +280,10 @@ while True:
 
         process_time_elapsed = time.time() - process_time_start
         print("Processing finished in " + str(process_time_elapsed)[0:3] + " seconds")
+        log.info("Image recognition finished in " + str(process_time_elapsed) + " seconds")
+        log.info("Enemy team is " + str(enemy_team))
+        if process_allies:
+            log.info("Allied team is " + str(allied_team))
 
         enemy_team_fancy = ''
         for i in enemy_team:
@@ -266,6 +296,7 @@ while True:
                 allied_team_fancy += (hero + ', ')
 
         total_conf_average = int(sum(total_confidence) / float(len(total_confidence)))
+        log.info("Image recognition had a confidence of " + str(total_conf_average))
 
         if total_conf_average > process_threshold:
             print("Enemy team: " + enemy_team_fancy[:-2])
@@ -282,6 +313,9 @@ while True:
                 j += 1
         if j == 6:
             enemy_is_heroes = False  # if everyone on the enemy team is loading or unknown
+            log.info("The enemy team IS loading or unknown")
+        else:
+            log.info("The enemy team is NOT loading or unknown")
 
         if total_conf_average > process_threshold and process_allies and enemy_is_heroes:
             # get overall team counter advantage
@@ -291,6 +325,7 @@ while True:
                 for j in allied_team:
                     cross_team_counter = get_counter(i, j)
                     allied_team_counter -= cross_team_counter
+            log.info("Overall team counter is " + str(allied_team_counter))
             if allied_team_counter < 0:
                 print("Your team has an counter advantage of " + str(-allied_team_counter))
             elif allied_team_counter > 0:
@@ -298,10 +333,12 @@ while True:
             elif allied_team_counter == 0:
                 print("Neither team has a counter advantage")
             else:
+                log.error("This should never happen")
                 raise ValueError  # sure why not
 
         if enemy_is_heroes and (total_conf_average > process_threshold):  # is this valid to get counters from
             # begin getting counters
+            log.info("Getting counters")
 
             all_counters = {}
 
@@ -314,6 +351,7 @@ while True:
                         all_counters[any_hero] -= countered
 
             sorted_counters = sorted(all_counters.items(), reverse=True, key=lambda z: z[1])  # wtf
+            log.info("Got " + str(len(sorted_counters)) + " counters")
 
             if not old_counter_list:
                 dps_counters = []
@@ -333,7 +371,7 @@ while True:
                             heal_counters.append(tuple((just_name, just_num)))
 
                     if just_name == conv.strip_dead(allied_team[0]):
-                        yourself = conv.fancify(just_name) + '): ' + str(just_num)
+                        yourself = 'You (' + conv.fancify(just_name) + '): ' + str(just_num)
 
                 # no need to sort these, sorted_counters was already sorted (duh)
 
@@ -353,7 +391,8 @@ while True:
                 print(final_counters)
 
             if highlight_yourself:
-                print("You (" + yourself)
+                print(yourself)
+                log.info("Yourself: '" + yourself + "'")
 
             allied_team_alive = []
             for possibly_dead_hero in allied_team:
@@ -375,15 +414,20 @@ while True:
             os.remove(screenshots_path + '/' + inputs_diff[0])  # doesn't recycle, fyi
             print("Deleted " + current_filename + ' (needed ' + str(delete_thresehold)
                   + '% confidence, got ' + str(total_conf_average) + '%)')
+            log.info("Deleted screenshot")
         else:
             print("Didn't delete " + current_filename + ' (needs ' + str(delete_thresehold)
                   + '% confidence, got ' + str(total_conf_average) + '%)')
+            log.info("Didn't delete screenshot")
             if delete_thresehold >= 100:
                 print("The delete threshold is currently 100%, which means that even tab menu screenshots aren't"
                       " deleted. Be sure to clean the screenshots folder out manually every now and then.")
         inputs_before = os.listdir(screenshots_path)  # resets screenshot folder list
 
+        log.info("END LOOP")
+
         if dev:
+            log.info("Dev mode is on and a full loop has been completed, exiting")
             raise SystemExit
 
         print('\n')
