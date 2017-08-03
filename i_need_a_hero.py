@@ -5,6 +5,7 @@ import os
 import time
 import configparser
 import ast
+import sys
 
 from get_counters import get_counter  # naming is hard
 import namenum_converter as conv
@@ -37,9 +38,9 @@ try:
         settings_raw = configfile.readlines()
         settings_raw = settings_raw[0:12]
         log.info("Settings: " + str(settings_raw))
-except FileNotFoundError as error:
-    settings_error = "Couldn't load inah-settings.ini (" + str(error) + ")"
-    print(settings_error, ", reverting to default settings")
+except:
+    settings_error = "Couldn't load settings " + str(sys.exc_info())
+    print(settings_error + ", reverting to default settings")
     log.error(settings_error)
 
 heroes = ['ana', 'bastion', 'dva', 'genji', 'hanzo',
@@ -138,9 +139,9 @@ while True:
                 settings_raw = configfile.readlines()
                 settings_raw = settings_raw[0:12]
                 log.info("Settings: " + str(settings_raw))
-        except FileNotFoundError as error:
-            settings_error = "Couldn't load inah-settings.ini (" + str(error) + ")"
-            print(settings_error, ", reverting to default settings")
+        except:
+            settings_error = "Couldn't load settings " + str(sys.exc_info())
+            print(settings_error + ", reverting to default settings")
             log.error(settings_error)
 
         inputs_diff = list(set(os.listdir(screenshots_path)) - set(inputs_before))
