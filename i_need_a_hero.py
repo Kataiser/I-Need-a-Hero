@@ -26,6 +26,7 @@ log.info("START")
 # defaults
 refresh_delay = 0.5
 process_allies = True
+max_logs = 10
 dev = False
 
 try:
@@ -34,14 +35,18 @@ try:
         config.read('inah-settings.ini')
         refresh_delay = float(config['MAIN']['refresh_delay'])
         process_allies = ast.literal_eval(config['MAIN']['process_allies'])
+        max_logs = float(config['MAIN']['max_logs'])
         dev = ast.literal_eval(config['MAIN']['dev'])
+
         settings_raw = configfile.readlines()
-        settings_raw = settings_raw[0:12]
+        settings_raw = settings_raw[0:13]
         log.info("Settings: " + str(settings_raw))
 except:
     settings_error = "Couldn't load settings " + str(sys.exc_info())
     print(settings_error + ", reverting to default settings")
     log.error(settings_error)
+
+log.cleanup(max_logs)
 
 heroes = ['ana', 'bastion', 'dva', 'genji', 'hanzo',
           'junkrat', 'lucio', 'mccree', 'mei', 'mercy',
@@ -136,8 +141,9 @@ while True:
                 old_counter_list = ast.literal_eval(config['MAIN']['old_counter_list'])
                 dev = ast.literal_eval(config['MAIN']['dev'])
                 preview = ast.literal_eval(config['MAIN']['preview'])
+
                 settings_raw = configfile.readlines()
-                settings_raw = settings_raw[0:12]
+                settings_raw = settings_raw[0:13]
                 log.info("Settings: " + str(settings_raw))
         except:
             settings_error = "Couldn't load settings " + str(sys.exc_info())

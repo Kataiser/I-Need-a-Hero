@@ -1,4 +1,5 @@
 import time
+import os
 
 
 def info(message):
@@ -29,8 +30,17 @@ def critical(message):
     log_file.close()
 
 
-def clear():
-    open(filename, 'w').close()
+def cleanup(max_logs):
+    all_logs = sorted(os.listdir('logs'))
+    overshoot = max_logs - len(all_logs)
+    deleted = 0
+    while overshoot < 0:
+        deleted += 1
+        log_to_delete = all_logs.pop(0)
+        os.remove('logs/' + log_to_delete)
+        overshoot = max_logs - len(all_logs)
+    info("Deleted " + str(deleted) + " log(s)")
+
 
 filename = str('logs/' + str(round(time.time())) + '.log')
 
