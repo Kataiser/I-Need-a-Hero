@@ -95,6 +95,9 @@ for learned_path in os.listdir('learned'):
         learned_images[learned_path[:-4]] = learned
 log.info("The learned folder has " + str(len(learned_images)) + " images")
 
+mask = Image.open('mask.png').convert('RGBA')  # used to ignore metal winged BS
+log.info("Mask opened: " + str(mask))
+
 loading_time = loading.done()
 log.info("Loaded in " + str(loading_time) + " seconds")
 
@@ -236,8 +239,6 @@ while True:
         allied_team = []
         enemy_team = []
         total_confidence = []
-        mask = Image.open('mask.png').convert('RGBA')  # used to ignore metal winged BS
-        log.info("Mask opened: " + str(mask))
 
         log.info("Starting image recognition")
         for h in range(0, len(filenames)):  # every ally or enemy
