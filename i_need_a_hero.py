@@ -79,7 +79,7 @@ else:
     filenames = ['enemy1', 'enemy2', 'enemy3', 'enemy4', 'enemy5', 'enemy6']
 if dev:
     print('FYI, developer mode is on.')
-    dev_file = 'testing/harder.jpg'
+    dev_file = 'testing/21-9.jpg'
     log.debug("Developer mode is on, dev_file is " + dev_file)
 
 screenshots_path = os.path.expanduser('~\Documents\Overwatch\ScreenShots\Overwatch')
@@ -180,15 +180,18 @@ while True:
         log.info("Aspect ratio is {} ({} / {})".format(aspect_ratio, width, height))
         if aspect_ratio > 2:  # the aspect ratio the user is running at is 21:9
             log.info("Formatted aspect ratio is closest to 21:9, processing accordingly")
-            screenshot = screenshot.resize((2560, 1080))
-            screenshot = screenshot.crop((315, 0, 2235, 1080))
+            if not (width == 2579 and height == 1080):
+                screenshot = screenshot.resize((2579, 1080), resample=Image.BICUBIC)
+            screenshot = screenshot.crop((329, 0, 2249, 1080))
         elif aspect_ratio < 1.7:  # aspect ratio is 16:10
             log.info("Formatted aspect ratio is closest to 16:10, processing accordingly")
-            screenshot = screenshot.resize((1920, 1200))
+            if not (width == 1920 and height == 1200):
+                screenshot = screenshot.resize((1920, 1200), resample=Image.BICUBIC)
             screenshot = screenshot.crop((0, 60, 1920, 1140))
         else:  # aspect ratio is 16:9
             log.info("Formatted aspect ratio is closest to 16:9, processing accordingly")
-            screenshot = screenshot.resize((1920, 1080))
+            if not (width == 1920 and height == 1080):
+                screenshot = screenshot.resize((1920, 1080), resample=Image.BICUBIC)
 
         if preview:
             screenshot.save('preview.png')
