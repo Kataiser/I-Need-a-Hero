@@ -25,7 +25,7 @@ def average_images(*arg):
                 output = Image.blend(output, opened_images[inputs], alpha)
 
     mask = Image.open('mask.png').convert('RGBA')
-    output = output.filter(ImageFilter.GaussianBlur(radius=2))
+    output = output.filter(ImageFilter.GaussianBlur(radius=1))
     output.paste(mask, (0, 0), mask)
     return output.convert('RGB')
 

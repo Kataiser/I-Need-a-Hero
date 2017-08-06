@@ -79,7 +79,7 @@ else:
     filenames = ['enemy1', 'enemy2', 'enemy3', 'enemy4', 'enemy5', 'enemy6']
 if dev:
     print('FYI, developer mode is on.')
-    dev_file = 'testing/21-9.jpg'
+    dev_file = 'testing/harder.jpg'
     log.debug("Developer mode is on, dev_file is " + dev_file)
 
 screenshots_path = os.path.expanduser('~\Documents\Overwatch\ScreenShots\Overwatch')
@@ -246,7 +246,7 @@ while True:
         log.info("Starting image recognition")
         for h in range(0, len(filenames)):  # every ally or enemy
             unknown_unloaded = filenames_opened[h]
-            unknown_unloaded = unknown_unloaded.filter(ImageFilter.GaussianBlur(radius=2))
+            unknown_unloaded = unknown_unloaded.filter(ImageFilter.GaussianBlur(radius=1))
             unknown_unloaded.paste(mask, (0, 0), mask)  # ...until I put on the mask
             unknown = unknown_unloaded.load()
 
