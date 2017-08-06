@@ -175,6 +175,17 @@ while True:
             screenshot = Image.open(dev_file)
             log.debug("Dev screenshot opened successfully: " + str(screenshot))
 
+        if preview:
+            screenshot.save('preview.png')
+            log.info("Saved preview")
+        else:
+            try:
+                os.remove("preview.png")
+                log.info("Deleted preview")
+            except FileNotFoundError:
+                log.info("No preview to delete")
+                pass
+
         width, height = screenshot.size
         aspect_ratio = width / height
         log.info("Aspect ratio is {} ({} / {})".format(aspect_ratio, width, height))
@@ -192,17 +203,6 @@ while True:
             log.info("Formatted aspect ratio is closest to 16:9, processing accordingly")
             if not (width == 1920 and height == 1080):
                 screenshot = screenshot.resize((1920, 1080), resample=Image.BICUBIC)
-
-        if preview:
-            screenshot.save('preview.png')
-            log.info("Saved preview")
-        else:
-            try:
-                os.remove("preview.png")
-                log.info("Deleted preview")
-            except FileNotFoundError:
-                log.info("No preview to delete")
-                pass
 
         if low_precision:
             step = 2  # skips every other pixel
