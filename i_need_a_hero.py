@@ -101,6 +101,7 @@ log.info("Mask opened: " + str(mask))
 loading_time = loading.done()
 log.info("Loaded in " + str(loading_time) + " seconds")
 
+loops_done = 0
 while True:
     time.sleep(refresh_delay)  # to stop high cpu usage while waiting
     continue_ = False
@@ -113,6 +114,7 @@ while True:
     if continue_ or dev:
         # starting analysis
         log.info("START LOOP")
+        log.info("Loop number: " + str(loops_done))
 
         process_time_start = time.time()
 
