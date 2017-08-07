@@ -115,6 +115,7 @@ while True:
         # starting analysis
         log.info("START LOOP")
         log.info("Loop number: " + str(loops_done))
+        loops_done += 1
 
         process_time_start = time.time()
 
