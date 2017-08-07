@@ -79,7 +79,7 @@ else:
     filenames = ['enemy1', 'enemy2', 'enemy3', 'enemy4', 'enemy5', 'enemy6']
 if dev:
     print('FYI, developer mode is on.')
-    dev_file = 'testing/harder.jpg'
+    dev_file = 'testing/doomfists.jpg'
     log.debug("Developer mode is on, dev_file is " + dev_file)
 
 screenshots_path = os.path.expanduser('~\Documents\Overwatch\ScreenShots\Overwatch')
@@ -350,6 +350,16 @@ while True:
                 log.error("This should never happen")
                 raise ValueError  # sure why not
 
+            allied_team_alive = []
+            for possibly_dead_hero in allied_team:
+                allied_team_alive.append(conv.strip_dead(possibly_dead_hero))
+            if not any(x in allied_team_alive for x in heroes_dps):
+                print("Your team doesn't have any DPS heroes!")
+            if not any(x in allied_team_alive for x in heroes_tank):
+                print("Your team doesn't have any tank heroes!")
+            if not any(x in allied_team_alive for x in heroes_heal):
+                print("Your team doesn't have any healers!")
+
         if enemy_is_heroes and (total_conf_average > process_threshold):  # is this valid to get counters from
             # begin getting counters
             log.info("Getting counters")
@@ -407,16 +417,6 @@ while True:
             if highlight_yourself:
                 print(yourself)
                 log.info("Yourself: '" + yourself + "'")
-
-            allied_team_alive = []
-            for possibly_dead_hero in allied_team:
-                allied_team_alive.append(conv.strip_dead(possibly_dead_hero))
-            if not any(x in allied_team_alive for x in heroes_dps):
-                print("Your team doesn't have any DPS heroes!")
-            if not any(x in allied_team_alive for x in heroes_tank):
-                print("Your team doesn't have any tank heroes!")
-            if not any(x in allied_team_alive for x in heroes_heal):
-                print("Your team doesn't have any healers!")
 
             # end getting counters
         elif not enemy_is_heroes:
