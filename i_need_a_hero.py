@@ -1,15 +1,16 @@
-import loading
+from resources import loading
+
+import ast
+import configparser
+import os
+import sys
+import time
 
 from PIL import Image, ImageFilter
-import os
-import time
-import configparser
-import ast
-import sys
 
-from get_counters import get_counter  # naming is hard
-import namenum_converter as conv
-import customlogger as log
+from resources import customlogger as log
+from resources import namenum_converter as conv
+from resources.get_counters import get_counter  # naming is hard
 
 
 def format_counter_list(counter_list):
@@ -79,7 +80,7 @@ else:
     filenames = ['enemy1', 'enemy2', 'enemy3', 'enemy4', 'enemy5', 'enemy6']
 if dev:
     print('FYI, developer mode is on.')
-    dev_file = 'testing/doomfists.jpg'
+    dev_file = 'testing/harder.jpg'
     log.debug("Developer mode is on, dev_file is " + dev_file)
 
 screenshots_path = os.path.expanduser('~\Documents\Overwatch\ScreenShots\Overwatch')
@@ -95,7 +96,7 @@ for learned_path in os.listdir('learned'):
         learned_images[learned_path[:-4]] = learned
 log.info("The learned folder has " + str(len(learned_images)) + " images")
 
-mask = Image.open('mask.png').convert('RGBA')  # used to ignore metal winged BS
+mask = Image.open('resources/mask.png').convert('RGBA')  # used to ignore metal winged BS
 log.info("Mask opened: " + str(mask))
 
 loading_time = loading.done()
