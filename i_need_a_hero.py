@@ -104,7 +104,8 @@ log.info("Loaded in " + str(loading_time) + " seconds")
 
 loops_done = 0
 while True:
-    time.sleep(refresh_delay)  # to stop high cpu usage while waiting
+    if not dev:
+        time.sleep(refresh_delay)  # to stop high cpu usage while waiting
     continue_ = False
     inputs_after = os.listdir(screenshots_path)
     if len(inputs_after) > len(inputs_before):  # if a file is added
