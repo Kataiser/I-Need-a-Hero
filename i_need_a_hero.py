@@ -80,7 +80,7 @@ else:
     filenames = ['enemy1', 'enemy2', 'enemy3', 'enemy4', 'enemy5', 'enemy6']
 if dev:
     print('FYI, developer mode is on.')
-    dev_file = 'testing/harder.jpg'
+    dev_file = 'testing/breaksit.jpg'
     log.debug("Developer mode is on, dev_file is " + dev_file)
 
 screenshots_path = os.path.expanduser('~\Documents\Overwatch\ScreenShots\Overwatch')
@@ -247,6 +247,7 @@ while True:
         allied_team = []
         enemy_team = []
         total_confidence = []
+        team_confidences = []
 
         log.info("Starting image recognition")
         for h in range(0, len(filenames)):  # every ally or enemy
@@ -300,6 +301,7 @@ while True:
         log.info("Enemy team is " + str(enemy_team))
         if process_allies:
             log.info("Allied team is " + str(allied_team))
+        log.info("Confidences (allied first): " + str(total_confidence))
 
         enemy_team_fancy = ''
         for i in enemy_team:

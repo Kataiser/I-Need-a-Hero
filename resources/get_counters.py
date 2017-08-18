@@ -1,6 +1,7 @@
 import openpyxl
 
 from resources import namenum_converter as conv
+from resources import customlogger as log
 
 
 def get_counter(hero1, hero2):
