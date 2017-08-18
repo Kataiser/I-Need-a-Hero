@@ -22,6 +22,12 @@ def format_counter_list(counter_list):
         formatted_counter += (full_counter + ', ')
     return formatted_counter[:-2]  # removes extra comma and space
 
+
+def log_any_uncaught_exception(type_, value, traceback):
+    log.critical("Uncaught exception: {} {} {}".format(type_, value, traceback))
+    raise SystemError
+
+sys.excepthook = log_any_uncaught_exception
 log.info("START")
 
 # defaults
