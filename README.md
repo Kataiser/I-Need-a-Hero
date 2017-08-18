@@ -1,7 +1,7 @@
 # I-Need-a-Hero
 Uses image recognition, based on an automatically loaded screenshot, to suggest the best (and worst) heroes for you and your team to play.
 
-![Example screenshot](screenshot.png)
+![Example screenshot](resources/screenshot.png)
 
 **Features:**
 - Once it's running, it's almost entirely automatic (no manually entering heroes)
