@@ -277,7 +277,7 @@ while True:
                 print("For " + filenames[h] + ":")
 
             likely_name = ''  # find the most likely hero
-            likely_num = 0
+            likely_num = -1
             for i in range(0, len(confidences)):
                 if confidences[i] > likely_num:
                     likely_num = confidences[i]
