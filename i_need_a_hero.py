@@ -125,7 +125,7 @@ while True:
         log.info("Loop number: " + str(loops_done))
         loops_done += 1
 
-        process_time_start = time.time()
+        process_time_start = time.perf_counter()
 
         # defaults
         delete_thresehold = 80
@@ -301,7 +301,7 @@ while True:
 
         print('\n')
 
-        process_time_elapsed = time.time() - process_time_start
+        process_time_elapsed = time.perf_counter() - process_time_start
         print("Processing finished in " + str(process_time_elapsed)[0:3] + " seconds")
         log.info("Image recognition finished in " + str(process_time_elapsed) + " seconds")
         log.info("Enemy team is " + str(enemy_team))
