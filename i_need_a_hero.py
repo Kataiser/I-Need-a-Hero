@@ -341,6 +341,17 @@ while True:
         else:
             log.info("The enemy team is NOT loading or unknown")
 
+        if total_conf_average > process_threshold and process_allies:
+            allied_team_alive = []
+            for possibly_dead_hero in allied_team:
+                allied_team_alive.append(conv.strip_dead(possibly_dead_hero))
+            if not any(x in allied_team_alive for x in heroes_dps):
+                print("Your team doesn't have any DPS heroes!")
+            if not any(x in allied_team_alive for x in heroes_tank):
+                print("Your team doesn't have any tank heroes!")
+            if not any(x in allied_team_alive for x in heroes_heal):
+                print("Your team doesn't have any healers!")
+
         if total_conf_average > process_threshold and process_allies and enemy_is_heroes:
             # get overall team counter advantage
 
@@ -359,16 +370,6 @@ while True:
             else:
                 log.error("This should never happen")
                 raise ValueError  # sure why not
-
-            allied_team_alive = []
-            for possibly_dead_hero in allied_team:
-                allied_team_alive.append(conv.strip_dead(possibly_dead_hero))
-            if not any(x in allied_team_alive for x in heroes_dps):
-                print("Your team doesn't have any DPS heroes!")
-            if not any(x in allied_team_alive for x in heroes_tank):
-                print("Your team doesn't have any tank heroes!")
-            if not any(x in allied_team_alive for x in heroes_heal):
-                print("Your team doesn't have any healers!")
 
         if enemy_is_heroes and (total_conf_average > process_threshold):  # is this valid to get counters from
             # begin getting counters
