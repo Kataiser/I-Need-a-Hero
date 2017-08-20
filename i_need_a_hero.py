@@ -86,7 +86,7 @@ else:
     filenames = ['enemy1', 'enemy2', 'enemy3', 'enemy4', 'enemy5', 'enemy6']
 if dev:
     print('FYI, developer mode is on.')
-    dev_file = 'testing/breaksit.jpg'
+    dev_file = 'testing/breaksit2.jpg'
     log.debug("Developer mode is on, dev_file is " + dev_file)
 
 screenshots_path = os.path.expanduser('~\Documents\Overwatch\ScreenShots\Overwatch')
@@ -289,6 +289,8 @@ while True:
                     likely_num = confidences[i]
                     likely_name = heroes[i]
             print_conf = int(likely_num * 100)
+            if print_conf < 0:
+                print_conf = 0
             if show_processing_text:
                 print("Most likely is " + likely_name
                       + ", with a confidence of " + str(print_conf) + "%")
