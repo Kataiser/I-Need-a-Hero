@@ -416,9 +416,9 @@ while True:
                 print('\n')
 
                 print("Counters (higher is better)")
-                print("DPS: " + final_counters_dps)
-                print("Tanks: " + final_counters_tank)
-                print("Healers: " + final_counters_heal)
+                print("DPS - " + final_counters_dps)
+                print("Tanks - " + final_counters_tank)
+                print("Healers - " + final_counters_heal)
             else:
                 final_counters = format_counter_list(sorted_counters)
                 print('\n')
