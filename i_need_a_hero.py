@@ -271,12 +271,10 @@ while True:
                 for x in range(0, 75, step):
                     for y in range(0, 75, step):
                         input_color = unknown[x, y]
-                        input_color = input_color[0]
 
                         learned_color = learned_image[x, y]
-                        learned_color = learned_color[0]
 
-                        confidences[j] += abs(input_color - learned_color)
+                        confidences[j] += abs(input_color[0] - learned_color[0])
                 confidences[j] = 1 - (confidences[j] / divisor)
 
             if show_processing_text:
