@@ -7,6 +7,7 @@ import sys
 import time
 
 from PIL import Image, ImageFilter
+from tqdm import tqdm
 
 from resources import customlogger as log
 from resources import namenum_converter as conv
@@ -256,7 +257,8 @@ while True:
         team_confidences = []
 
         log.info("Starting image recognition")
-        for h in range(0, len(filenames)):  # every ally or enemy
+        for h in tqdm(range(0, len(filenames)), file=sys.stdout, ncols=40, bar_format='{l_bar}{bar}|'):
+            # loads an portrait to process
             unknown_unloaded = filenames_opened[h]
             unknown_unloaded = unknown_unloaded.filter(ImageFilter.GaussianBlur(radius=1))
             unknown_unloaded.paste(mask, (0, 0), mask)  # ...until I put on the mask
