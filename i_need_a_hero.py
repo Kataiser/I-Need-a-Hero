@@ -87,12 +87,17 @@ else:
     filenames = ['enemy1', 'enemy2', 'enemy3', 'enemy4', 'enemy5', 'enemy6']
 if dev:
     print('FYI, developer mode is on.')
-    dev_file = 'testing/breaksit2.jpg'
+    dev_file = 'testing/harder.jpg'
     log.debug("Developer mode is on, dev_file is " + dev_file)
 
 screenshots_path = os.path.expanduser('~\Documents\Overwatch\ScreenShots\Overwatch')
 log.info("screenshots_path is " + screenshots_path)
-inputs_before = os.listdir(screenshots_path)  # a list of every file in the screenshots folder
+try:
+    inputs_before = os.listdir(screenshots_path)  # a list of every file in the screenshots folder
+except FileNotFoundError:
+    print("Couldn't find the screenshots folder (should be at {})".format(screenshots_path))
+    log.critical("Couldn't find screenshots_path")
+    raise SystemExit
 log.info('The screenshots folder has ' + str(len(inputs_before)) + " images")
 
 # builds a cache of learned images
