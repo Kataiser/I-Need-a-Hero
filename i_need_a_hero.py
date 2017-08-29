@@ -458,7 +458,7 @@ while True:
         log.info("END LOOP")
 
         if dev:
-            log.info("Dev mode is on and a full loop has been completed, exiting")
+            log.debug("Dev mode is on and a full loop has been completed, exiting")
             raise SystemExit
 
         print('\n')
