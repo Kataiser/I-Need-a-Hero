@@ -162,6 +162,7 @@ while True:
                 old_counter_list = ast.literal_eval(config['MAIN']['old_counter_list'])
                 dev = ast.literal_eval(config['MAIN']['dev'])
                 preview = ast.literal_eval(config['MAIN']['preview'])
+                preview_scale = float(config['MAIN']['preview_scale'])
 
                 settings_raw = configfile.readlines()
                 settings_raw = settings_raw[0:13]
@@ -194,7 +195,9 @@ while True:
             log.debug("Dev screenshot opened successfully: " + str(screenshot))
 
         if preview:
-            screenshot.save('preview.png')
+            width, height = screenshot.size
+            preview_dimensions = (round(width * preview_scale), round(height * preview_scale))
+            screenshot.resize(preview_dimensions).save('preview.png')
             log.info("Saved preview")
         else:
             try:
@@ -203,8 +206,8 @@ while True:
             except FileNotFoundError:
                 log.info("No preview to delete")
                 pass
-
-        width, height = screenshot.size
+        if not width:
+            width, height = screenshot.size
         aspect_ratio = width / height
         log.info("Aspect ratio is {} ({} / {})".format(aspect_ratio, width, height))
         if aspect_ratio > 2:  # the aspect ratio the user is running at is 21:9
