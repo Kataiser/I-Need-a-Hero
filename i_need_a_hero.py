@@ -1,3 +1,4 @@
+
 from resources import loading
 
 import ast
@@ -87,7 +88,7 @@ else:
     filenames = ['enemy1', 'enemy2', 'enemy3', 'enemy4', 'enemy5', 'enemy6']
 if dev:
     print('FYI, developer mode is on.')
-    dev_file = 'testing/harder.jpg'
+    dev_file = 'testing/bettercrop.jpg'
     log.debug("Developer mode is on, dev_file is " + dev_file)
 
 screenshots_path = os.path.expanduser('~\Documents\Overwatch\ScreenShots\Overwatch')
@@ -366,17 +367,15 @@ while True:
             for i in enemy_team:
                 for j in allied_team:
                     cross_team_counter = get_counter(i, j)
-                    allied_team_counter -= cross_team_counter
-            log.info("Overall team counter is " + str(allied_team_counter))
-            if allied_team_counter < 0:
-                print("Your team has an counter advantage of " + str(-allied_team_counter))
-            elif allied_team_counter > 0:
-                print("The enemy team has an counter advantage of " + str(allied_team_counter))
-            elif allied_team_counter == 0:
-                print("Neither team has a counter advantage")
+                    allied_team_counter += cross_team_counter
+            print_team_counter = round(allied_team_counter)
+            log.info("Overall team counter is {}".format(allied_team_counter))
+            if allied_team_counter > 1:
+                print("Your team has an counter advantage of {}".format(print_team_counter))
+            elif allied_team_counter < -1:
+                print("The enemy team has an counter advantage of {}".format(-print_team_counter))
             else:
-                log.error("This should never happen")
-                raise ValueError  # sure why not
+                print("Neither team has a counter advantage")
 
         if enemy_is_heroes and (total_conf_average > process_threshold):  # is this valid to get counters from
             # begin getting counters
@@ -402,7 +401,7 @@ while True:
 
                 for pair in sorted_counters:
                     just_name = pair[0]
-                    just_num = pair[1]
+                    just_num = round(pair[1])
 
                     if just_name not in allied_team or include_allies_in_counters:
                         if just_name in heroes_dps:
