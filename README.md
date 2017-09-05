@@ -22,4 +22,6 @@ Unzip anywhere. To run, double click "I Need a Hero", move the window to a secon
 
 **Trello board:** https://trello.com/b/7pb5hLHX
 
+**Sentry.io:** https://sentry.io/kataiser/i-need-a-hero/
+
 *All character names and portraits used are property of Blizzard Entertainment Inc. This program is not associated with nor endorsed by Blizzard Entertainment.*
