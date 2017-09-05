@@ -145,6 +145,7 @@ while True:
         old_counter_list = False
         dev = False
         preview = False
+        preview_scale = 0.25
 
         try:
             config = configparser.ConfigParser()  # load all settings
