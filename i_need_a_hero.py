@@ -135,6 +135,7 @@ while True:
         delete_thresehold = 80
         process_threshold = 70
         refresh_delay = 0.5
+        synergy_weight = 0.25
         low_precision = False
         process_allies = True
         include_allies_in_counters = True
@@ -152,6 +153,7 @@ while True:
                 delete_thresehold = int(config['MAIN']['delete_thresehold'])
                 process_threshold = int(config['MAIN']['process_threshold'])
                 refresh_delay = float(config['MAIN']['refresh_delay'])
+                synergy_weight = float(config['MAIN']['synergy_weight'])
                 low_precision = ast.literal_eval(config['MAIN']['low_precision'])
                 process_allies = ast.literal_eval(config['MAIN']['process_allies'])
                 include_allies_in_counters = ast.literal_eval(config['MAIN']['include_allies_in_counters'])
@@ -388,7 +390,7 @@ while True:
                     cross_team_counter = get_counter(i, j)
                     allied_team_counter += cross_team_counter
 
-            team_synergy_diff = (allied_team_synergy - enemy_team_synergy) * 0.25
+            team_synergy_diff = (allied_team_synergy - enemy_team_synergy) * synergy_weight
             log.info("Team counter/synergy advantage is {}/{}".format(allied_team_counter, team_synergy_diff))
             
             if allied_team_counter > 1:
@@ -421,7 +423,7 @@ while True:
                     ally_hero = conv.strip_dead(ally_hero)
                     if ('unknown' not in any_hero) and ('loading' not in any_hero):
                         synergy = get_synergy(any_hero, ally_hero, False)
-                        all_counters[any_hero] -= synergy * 0.25
+                        all_counters[any_hero] -= synergy * synergy_weight
 
             sorted_counters = sorted(all_counters.items(), reverse=True, key=lambda z: z[1])  # wtf
             log.info("Got " + str(len(sorted_counters)) + " counters")
