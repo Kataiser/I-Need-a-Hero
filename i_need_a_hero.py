@@ -1,4 +1,3 @@
-
 from resources import loading
 
 import ast
@@ -12,7 +11,7 @@ from tqdm import tqdm
 
 from resources import customlogger as log
 from resources import namenum_converter as conv
-from resources.get_counters import get_counter  # naming is hard
+from resources.get_counters import get_counter, get_synergy  # naming is hard
 
 
 def format_counter_list(counter_list):
@@ -365,20 +364,43 @@ while True:
 
         if total_conf_average > process_threshold and process_allies and enemy_is_heroes:
             # get overall team counter advantage
+            allied_team_synergy = 0
+            for ally_hero1 in allied_team:
+                for ally_hero2 in allied_team:
+                    ally_hero1 = conv.strip_dead(ally_hero1)
+                    ally_hero2 = conv.strip_dead(ally_hero2)
+                    synergy = get_synergy(ally_hero1, ally_hero2, True)
+                    allied_team_synergy += synergy
+                            
+            enemy_team_synergy = 0
+            for enemy_hero1 in enemy_team:
+                for enemy_hero2 in enemy_team:
+                    enemy_hero1 = conv.strip_dead(enemy_hero1)
+                    enemy_hero2 = conv.strip_dead(enemy_hero2)
+                    synergy = get_synergy(enemy_hero1, enemy_hero2, True)
+                    enemy_team_synergy += synergy
 
             allied_team_counter = 0
             for i in enemy_team:
                 for j in allied_team:
                     cross_team_counter = get_counter(i, j)
                     allied_team_counter += cross_team_counter
-            print_team_counter = round(allied_team_counter)
-            log.info("Overall team counter is {}".format(allied_team_counter))
+
+            team_synergy_diff = (allied_team_synergy - enemy_team_synergy) * 0.25
+            log.info("Team counter/synergy advantage is {}/{}".format(allied_team_counter, team_synergy_diff))
+            
             if allied_team_counter > 1:
-                print("Your team has an counter advantage of {}".format(print_team_counter))
+                print("Your team has an counter advantage of {}".format(round(allied_team_counter)))
             elif allied_team_counter < -1:
-                print("The enemy team has an counter advantage of {}".format(-print_team_counter))
+                print("The enemy team has an counter advantage of {}".format(-round(allied_team_counter)))
             else:
                 print("Neither team has a counter advantage")
+            if team_synergy_diff > 1:
+                print("Your team has an synergy advantage of {}".format(round(team_synergy_diff)))
+            elif team_synergy_diff < -1:
+                print("The enemy team has an synergy advantage of {}".format(-round(team_synergy_diff)))
+            else:
+                print("Neither team has a synergy advantage")
 
         if enemy_is_heroes and (total_conf_average > process_threshold):  # is this valid to get counters from
             # begin getting counters
@@ -392,7 +414,12 @@ while True:
                     enemy_hero = conv.strip_dead(enemy_hero)
                     if ('unknown' not in any_hero) and ('loading' not in any_hero):
                         countered = get_counter(any_hero, enemy_hero)
-                        all_counters[any_hero] -= countered
+                        all_counters[any_hero] += countered * 1
+                for ally_hero in allied_team:
+                    ally_hero = conv.strip_dead(ally_hero)
+                    if ('unknown' not in any_hero) and ('loading' not in any_hero):
+                        synergy = get_synergy(any_hero, ally_hero, False)
+                        all_counters[any_hero] -= synergy * 0.25
 
             sorted_counters = sorted(all_counters.items(), reverse=True, key=lambda z: z[1])  # wtf
             log.info("Got " + str(len(sorted_counters)) + " counters")

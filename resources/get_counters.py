@@ -42,7 +42,7 @@ def get_counter_csv(hero1, hero2):
             break
     if counter_value1 and counter_value2:
         counter_value1 = int(convert_values_table[str(counter_value1)])
-        counter_value2 = 1 - int(convert_values_table[str(counter_value2)])
+        counter_value2 = int(convert_values_table_reversed[str(counter_value2)])
         counter_value_average = (counter_value1 + counter_value2) / 2
         return counter_value_average
     return None  # if doomfist or orisa
@@ -60,6 +60,40 @@ def get_counter(hero1, hero2):
         return xlsx_results
     else:
         return (xlsx_results + csv_results) / 2
+
+
+def get_synergy(hero1, hero2, blank_is_negative):
+    hero1 = conv.fancify(hero1)
+    hero2 = conv.fancify(hero2)
+    if hero1 == 'Soldier 76':
+        hero1 = 'Soldier: 76'
+    if hero2 == 'Soldier 76':
+        hero2 = 'Soldier: 76'
+    if blank_is_negative:
+        if 'unknown' in hero1 or 'loading' in hero1:
+            return -2
+        if 'unknown' in hero2 or 'loading' in hero2:
+            return -2
+    if hero1 == hero2:
+        return 0
+
+    synergy_value1 = None
+    synergy_value2 = None
+    for full_synergy in synergies_table:
+        synergy_first = full_synergy[0]
+        synergy_second = full_synergy[1]
+        if synergy_first == hero1 and synergy_second == hero2:
+            synergy_value1 = full_synergy[2]
+        if synergy_first == hero2 and synergy_second == hero1:
+            synergy_value2 = full_synergy[2]
+        if synergy_value1 and synergy_value2:
+            break
+    if synergy_value1 and synergy_value2:
+        synergy_value1 = int(convert_values_table[str(synergy_value1)])
+        synergy_value2 = int(convert_values_table[str(synergy_value2)])
+        synergy_value_average = (synergy_value1 + synergy_value2) / 2
+        return synergy_value_average
+    return 0  # if doomfist or orisa
 
 # setup for xlsx
 wb = openpyxl.load_workbook('resources/counters.xlsx')
@@ -83,3 +117,11 @@ with open('resources/counters.csv', newline='') as csvfile:  # loads the counter
         counters_table.append(counter_tuple)
 
 convert_values_table = {'5': -2, '4': -1, '3': 0, '2': 1, '1': 2, '0': 0}
+convert_values_table_reversed = {'5': 2, '4': 1, '3': 0, '2': -1, '1': -2, '0': 0}
+
+with open('resources/synergies.csv', newline='') as csvfile:  # loads the synergies database
+    reader = csv.DictReader(csvfile)
+    synergies_table = []
+    for line in reader:  # builds a synergy table
+        synergy_tuple = (line['agent'], line['target'], line['median'])
+        synergies_table.append(synergy_tuple)
