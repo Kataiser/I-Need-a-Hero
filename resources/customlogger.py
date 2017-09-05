@@ -1,6 +1,7 @@
 import time
 import os
 
+from raven import breadcrumbs
 from resources import exception_handler
 
 
@@ -8,8 +9,10 @@ def write_log(level, message_out):
     current_time = str(time.strftime('%c'))
     time_since_start = format(time.perf_counter() - start_time, '.4f')  # the format() adds trailing zeroes
     log_file = open(filename, 'a')
-    log_file.write("[{} +{}] {}: {}\n".format(current_time, time_since_start, level, message_out))
+    full_line = "[{} +{}] {}: {}\n".format(current_time, time_since_start, level, message_out)
+    log_file.write(full_line)
     log_file.close()
+    breadcrumbs.record(message=full_line, level=level)  # sentry level = custom level
 
 
 def info(message_in):
