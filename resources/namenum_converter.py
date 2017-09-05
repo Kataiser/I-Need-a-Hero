@@ -1,3 +1,6 @@
+from resources import exception_handler
+
+
 def name_to_num(name):
     return table_long[name]
 
@@ -17,6 +20,8 @@ def strip_dead(name):
     if 'dead' in name:
         name = name[:-4]
     return name
+
+exception_handler.setup_excepthook()
 
 table_long = {'unknown': -1, 'loading': -1, 'ana': 0, 'bastion': 1, 'dva': 2,
               'genji': 3, 'hanzo': 4, 'junkrat': 5, 'lucio': 6, 'mccree': 7,

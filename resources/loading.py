@@ -1,4 +1,5 @@
 import time
+from resources import exception_handler
 
 
 def done():
@@ -7,6 +8,8 @@ def done():
     print('Loading complete ({} seconds). Hold tab and press the "print screen" button to analyze and get counters.'
           .format(load_time))
     return load_time
+
+exception_handler.setup_excepthook()
 
 print('Loading "I Need a Hero", by Kataiser...')
 print("https://github.com/Kataiser/I-Need-a-Hero")

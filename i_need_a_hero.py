@@ -9,6 +9,7 @@ import time
 from PIL import Image, ImageFilter
 from tqdm import tqdm
 
+from resources import exception_handler
 from resources import customlogger as log
 from resources import namenum_converter as conv
 from resources.get_counters import get_counter, get_synergy  # naming is hard
@@ -23,12 +24,7 @@ def format_counter_list(counter_list):
         formatted_counter += (full_counter + ', ')
     return formatted_counter[:-2]  # removes extra comma and space
 
-
-def log_any_uncaught_exception(type_, value, traceback):
-    log.critical("Uncaught exception: {} {} {}".format(type_, value, traceback))
-    raise SystemError
-
-sys.excepthook = log_any_uncaught_exception
+exception_handler.setup_excepthook()
 log.info("START")
 
 # defaults
@@ -50,9 +46,10 @@ try:
         settings_raw = settings_raw[0:13]
         log.info("Settings: " + str(settings_raw))
 except:
-    settings_error = "Couldn't load settings " + str(sys.exc_info())
-    print(settings_error + ", reverting to default settings")
-    log.error(settings_error)
+    settings_error_prefix = "Couldn't load settings: "
+    settings_error = exception_handler.format_caught_exception(sys.exc_info())
+    print('{} "{}", reverting to default settings'.format(settings_error_prefix, sys.exc_info()[1]))
+    log.error(settings_error_prefix + settings_error)
 
 log.cleanup(max_logs)
 
@@ -96,7 +93,8 @@ try:
     inputs_before = os.listdir(screenshots_path)  # a list of every file in the screenshots folder
 except FileNotFoundError:
     print("Couldn't find the screenshots folder (should be at {})".format(screenshots_path))
-    log.critical("Couldn't find screenshots_path")
+    log.critical("Couldn't find screenshots_path: {}".format(
+        exception_handler.format_caught_exception(sys.exc_info())))
     raise SystemExit
 log.info('The screenshots folder has ' + str(len(inputs_before)) + " images")
 
@@ -168,9 +166,10 @@ while True:
                 settings_raw = settings_raw[0:13]
                 log.info("Settings: " + str(settings_raw))
         except:
-            settings_error = "Couldn't load settings " + str(sys.exc_info())
-            print(settings_error + ", reverting to default settings")
-            log.error(settings_error)
+            settings_error_prefix = "Couldn't load settings: "
+            settings_error = exception_handler.format_caught_exception(sys.exc_info())
+            print('{} "{}", reverting to default settings'.format(settings_error_prefix, sys.exc_info()[1]))
+            log.error(settings_error_prefix + settings_error)
 
         inputs_diff = list(set(os.listdir(screenshots_path)) - set(inputs_before))
         log.info("inputs_diff is " + str(inputs_diff))
@@ -185,10 +184,11 @@ while True:
                 time.sleep(0.1)  # bug "fix"
                 screenshot = Image.open(screenshots_path + '/' + inputs_diff[0])
                 log.info("Screenshot opened successfully: " + str(screenshot))
-            except OSError as error:
+            except OSError:
                 print("This doesn't seem to be an image file.")
                 inputs_before = os.listdir(screenshots_path)  # resets screenshot folder list
-                log.error("Couldn't open screenshot file: " + str(error))
+                log.error("Couldn't open screenshot file: {}".format(
+                          exception_handler.format_caught_exception(sys.exc_info())))
                 continue
         else:
             screenshot = Image.open(dev_file)
@@ -206,6 +206,7 @@ while True:
             except FileNotFoundError:
                 log.info("No preview to delete")
                 pass
+
         if not width:
             width, height = screenshot.size
         aspect_ratio = width / height
@@ -415,7 +416,7 @@ while True:
                     enemy_hero = conv.strip_dead(enemy_hero)
                     if ('unknown' not in any_hero) and ('loading' not in any_hero):
                         countered = get_counter(any_hero, enemy_hero)
-                        all_counters[any_hero] += countered * 1
+                        all_counters[any_hero] += countered
                 for ally_hero in allied_team:
                     ally_hero = conv.strip_dead(ally_hero)
                     if ('unknown' not in any_hero) and ('loading' not in any_hero):

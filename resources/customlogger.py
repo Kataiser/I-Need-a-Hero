@@ -1,6 +1,8 @@
 import time
 import os
 
+from resources import exception_handler
+
 
 def write_log(level, message_out):
     current_time = str(time.strftime('%c'))
@@ -37,6 +39,7 @@ def cleanup(max_logs):  # deletes older logs
         overshoot = max_logs - len(all_logs)
     info("Deleted " + str(deleted) + " log(s)")
 
+exception_handler.setup_excepthook()
 
 start_time = time.perf_counter()
 filename = str('logs/' + str(round(time.time())) + '.log')

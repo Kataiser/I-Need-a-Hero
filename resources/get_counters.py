@@ -2,6 +2,7 @@ import openpyxl
 import csv
 
 from resources import namenum_converter as conv
+from resources import exception_handler
 
 
 def get_counter_xlsx(hero1, hero2):
@@ -94,6 +95,8 @@ def get_synergy(hero1, hero2, blank_is_negative):
         synergy_value_average = (synergy_value1 + synergy_value2) / 2
         return synergy_value_average
     return 0  # if doomfist or orisa
+
+exception_handler.setup_excepthook()
 
 # setup for xlsx
 wb = openpyxl.load_workbook('resources/counters.xlsx')
