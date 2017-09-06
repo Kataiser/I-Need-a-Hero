@@ -24,6 +24,22 @@ def format_counter_list(counter_list):
         formatted_counter += (full_counter + ', ')
     return formatted_counter[:-2]  # removes extra comma and space
 
+
+def does_team_have_categories(team):
+    team_alive = []
+    for possibly_dead_hero in team:
+        team_alive.append(conv.strip_dead(possibly_dead_hero))
+
+    out_string = ""
+    if not any(x in team_alive for x in heroes_dps):
+        out_string += "(No DPS) "
+    if not any(x in team_alive for x in heroes_tank):
+        out_string += "(No tanks) "
+    if not any(x in team_alive for x in heroes_heal):
+        out_string += "(No healers) "
+    if out_string != "":
+        print(out_string)
+
 exception_handler.setup_excepthook()
 log.info("START")
 
@@ -87,7 +103,7 @@ else:
     filenames = ['enemy1', 'enemy2', 'enemy3', 'enemy4', 'enemy5', 'enemy6']
 if dev:
     print('FYI, developer mode is on.')
-    dev_file = 'testing/bettercrop.jpg'
+    dev_file = 'testing/cropit.jpg'
     log.debug("Developer mode is on, dev_file is " + dev_file)
 
 screenshots_path = os.path.expanduser('~\Documents\Overwatch\ScreenShots\Overwatch')
@@ -345,7 +361,9 @@ while True:
 
         if total_conf_average > process_threshold:
             print("Enemy team: " + enemy_team_fancy[:-2])
+            does_team_have_categories(enemy_team)
             print("Allied team: " + allied_team_fancy[:-2])
+            does_team_have_categories(allied_team)
             print("Confidence: " + str(total_conf_average) + '%')
         else:
             print("This screenshot doesn't seem to be of the tab menu " +
@@ -361,17 +379,7 @@ while True:
             log.info("The enemy team IS loading or unknown")
         else:
             log.info("The enemy team is NOT loading or unknown")
-
-        if total_conf_average > process_threshold and process_allies:
-            allied_team_alive = []
-            for possibly_dead_hero in allied_team:
-                allied_team_alive.append(conv.strip_dead(possibly_dead_hero))
-            if not any(x in allied_team_alive for x in heroes_dps):
-                print("Your team doesn't have any DPS heroes!")
-            if not any(x in allied_team_alive for x in heroes_tank):
-                print("Your team doesn't have any tank heroes!")
-            if not any(x in allied_team_alive for x in heroes_heal):
-                print("Your team doesn't have any healers!")
+            log.info("The enemy team is NOT loading or unknown")
 
         if total_conf_average > process_threshold and process_allies and enemy_is_heroes:
             # get overall team counter advantage
