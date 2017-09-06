@@ -5,7 +5,7 @@ Uses image recognition, based on an automatically loaded screenshot, to suggest 
 
 **Features:**
 - Once it's running, it's almost entirely automatic (no manually entering heroes)
-- Processes fairly quickly (2ish seconds for me, 0.5 if using low precision mode)
+- Processes fairly quickly (0.5 seconds for me, 2ish if not using low precision mode)
 - Auto deletes tab menu screenshots (see note at bottom of readme)
 - Calulates how well a hero counters the enemy *and* synergizes with your team
 - Shows if a team is missing a category of heroes
