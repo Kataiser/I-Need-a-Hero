@@ -103,7 +103,14 @@ learned_images = {}
 for learned_path in os.listdir('learned'):
     if 'png' in learned_path:
         learned = Image.open('learned/' + learned_path).load()
-        learned_images[learned_path[:-4]] = learned
+        pixel_list_x = []
+        for x in range(0, 75):
+            pixel_list_y = []
+            for y in range(0, 75):
+                color = learned[x, y][0]
+                pixel_list_y.append(color)
+            pixel_list_x.append(pixel_list_y)
+        learned_images[learned_path[:-4]] = pixel_list_x
 log.info("The learned folder has " + str(len(learned_images)) + " images")
 
 mask = Image.open('resources/mask.png').convert('RGBA')  # used to ignore metal winged BS
@@ -275,6 +282,13 @@ while True:
             unknown_unloaded = unknown_unloaded.filter(ImageFilter.GaussianBlur(radius=1))
             unknown_unloaded.paste(mask, (0, 0), mask)  # ...until I put on the mask
             unknown = unknown_unloaded.load()
+            pixel_list_x = []
+            for x in range(0, 75):
+                pixel_list_y = []
+                for y in range(0, 75):
+                    color = unknown[x, y][0]
+                    pixel_list_y.append(color)
+                pixel_list_x.append(pixel_list_y)
 
             confidences = []
             for i in heroes:
@@ -284,11 +298,11 @@ while True:
                 learned_image = learned_images[heroes[j]]
                 for x in range(0, 75, step):
                     for y in range(0, 75, step):
-                        input_color = unknown[x, y]
+                        input_color = pixel_list_x[x][y]
 
-                        learned_color = learned_image[x, y]
+                        learned_color = learned_image[x][y]
 
-                        confidences[j] += abs(input_color[0] - learned_color[0])
+                        confidences[j] += abs(input_color - learned_color)
                 confidences[j] = 1 - (confidences[j] / divisor)
 
             if show_processing_text:
