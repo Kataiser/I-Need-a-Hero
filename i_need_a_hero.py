@@ -70,7 +70,10 @@ except:
 log.cleanup(max_logs)
 
 if dev:
+    print('FYI, developer mode is on.')
     exception_handler.disable_sentry()
+    dev_file = 'testing/cropit.jpg'
+    log.debug("Developer mode is on, dev_file is " + dev_file)
 
 heroes = ['ana', 'bastion', 'dva', 'genji', 'hanzo',
           'junkrat', 'lucio', 'mccree', 'mei', 'mercy',
@@ -101,10 +104,6 @@ if process_allies:
                  'enemy1', 'enemy2', 'enemy3', 'enemy4', 'enemy5', 'enemy6']
 else:
     filenames = ['enemy1', 'enemy2', 'enemy3', 'enemy4', 'enemy5', 'enemy6']
-if dev:
-    print('FYI, developer mode is on.')
-    dev_file = 'testing/cropit.jpg'
-    log.debug("Developer mode is on, dev_file is " + dev_file)
 
 screenshots_path = os.path.expanduser('~\Documents\Overwatch\ScreenShots\Overwatch')
 log.info("screenshots_path is " + screenshots_path)
