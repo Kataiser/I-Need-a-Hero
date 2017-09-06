@@ -53,6 +53,9 @@ except:
 
 log.cleanup(max_logs)
 
+if dev:
+    exception_handler.disable_sentry()
+
 heroes = ['ana', 'bastion', 'dva', 'genji', 'hanzo',
           'junkrat', 'lucio', 'mccree', 'mei', 'mercy',
           'pharah', 'reaper', 'reinhardt', 'roadhog', 'soldier',
