@@ -5,11 +5,13 @@ Uses image recognition, based on an automatically loaded screenshot, to suggest 
 
 **Features:**
 - Once it's running, it's almost entirely automatic (no manually entering heroes)
-- Processes fairly quickly (4ish seconds for me)
+- Processes fairly quickly (2ish seconds for me, 0.5 if using low precision mode)
 - Auto deletes tab menu screenshots (see note at bottom of readme)
-- Shows confidence of image recognition, per hero and overall
-- Shows which team currently has the counter advantage
-- Sorts by hero type (DPS, tank, and healer)
+- Calulates how well a hero counters the enemy *and* synergizes with your team
+- Shows if a team is missing a category of heroes
+- Shows which team currently has the counter/synergy advantage
+- Sorts by hero category (DPS, tank, and healer)
+- Up to date with new heroes (most recent: Doomfist)
 - Comprehensive, documented settings file
 - Easy installation
 
