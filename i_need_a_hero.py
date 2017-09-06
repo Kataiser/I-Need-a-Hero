@@ -360,11 +360,11 @@ while True:
         log.info("Image recognition had a confidence of " + str(total_conf_average))
 
         if total_conf_average > process_threshold:
+            print("Confidence: " + str(total_conf_average) + '%')
             print("Enemy team: " + enemy_team_fancy[:-2])
             does_team_have_categories(enemy_team)
             print("Allied team: " + allied_team_fancy[:-2])
             does_team_have_categories(allied_team)
-            print("Confidence: " + str(total_conf_average) + '%')
         else:
             print("This screenshot doesn't seem to be of the tab menu " +
                   "(needs " + str(process_threshold) + "% confidence, got " + str(total_conf_average) + "%)")
