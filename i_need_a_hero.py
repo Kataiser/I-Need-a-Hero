@@ -260,18 +260,8 @@ while True:
 
         filenames_opened = []
         if process_allies:
-            filenames_opened.append(ally1)
-            filenames_opened.append(ally2)
-            filenames_opened.append(ally3)
-            filenames_opened.append(ally4)
-            filenames_opened.append(ally5)
-            filenames_opened.append(ally6)
-        filenames_opened.append(enemy1)
-        filenames_opened.append(enemy2)
-        filenames_opened.append(enemy3)
-        filenames_opened.append(enemy4)
-        filenames_opened.append(enemy5)
-        filenames_opened.append(enemy6)
+            filenames_opened.extend((ally1, ally2, ally3, ally4, ally5, ally6))
+        filenames_opened.extend((enemy1, enemy2, enemy3, enemy4, enemy5, enemy6))
 
         allied_team = []
         enemy_team = []
