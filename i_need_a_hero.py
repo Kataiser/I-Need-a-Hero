@@ -218,7 +218,7 @@ while True:
             width, height = screenshot.size
             preview_dimensions = (round(width * preview_scale), round(height * preview_scale))
             screenshot.resize(preview_dimensions).save('preview.png')
-            log.info("Saved preview")
+            log.info("Saved preview {}".format(preview_dimensions))
         else:
             try:
                 os.remove("preview.png")
