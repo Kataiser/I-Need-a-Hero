@@ -32,11 +32,11 @@ def does_team_have_categories(team):
 
     out_string = ""
     if not any(x in team_alive for x in heroes_dps):
-        out_string += "(No DPS) "
+        out_string += "[No DPS] "
     if not any(x in team_alive for x in heroes_tank):
-        out_string += "(No tanks) "
+        out_string += "[No tanks] "
     if not any(x in team_alive for x in heroes_heal):
-        out_string += "(No healers) "
+        out_string += "[No healers] "
     if out_string != "":
         print(out_string)
 
