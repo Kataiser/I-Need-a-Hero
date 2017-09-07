@@ -45,7 +45,6 @@ log.info("START")
 
 # defaults
 refresh_delay = 0.5
-process_allies = True
 max_logs = 10
 dev = False
 
@@ -54,7 +53,6 @@ try:
     with open('inah-settings.ini', 'r') as configfile:
         config.read('inah-settings.ini')
         refresh_delay = float(config['MAIN']['refresh_delay'])
-        process_allies = ast.literal_eval(config['MAIN']['process_allies'])
         max_logs = float(config['MAIN']['max_logs'])
         dev = ast.literal_eval(config['MAIN']['dev'])
 
@@ -72,7 +70,7 @@ log.cleanup(max_logs)
 if dev:
     print('FYI, developer mode is on.')
     exception_handler.disable_sentry()
-    dev_file = 'testing/cropit.jpg'
+    dev_file = 'testing/bettercrop.jpg'
     log.debug("Developer mode is on, dev_file is " + dev_file)
 
 heroes = ['ana', 'bastion', 'dva', 'genji', 'hanzo',
@@ -99,11 +97,8 @@ for i in heroes:
     if ('unknown' not in hero) and ('loading' not in hero):
         heroes_normal.append(hero)
 
-if process_allies:
-    filenames = ['ally1', 'ally2', 'ally3', 'ally4', 'ally5', 'ally6',
-                 'enemy1', 'enemy2', 'enemy3', 'enemy4', 'enemy5', 'enemy6']
-else:
-    filenames = ['enemy1', 'enemy2', 'enemy3', 'enemy4', 'enemy5', 'enemy6']
+filenames = ['ally1', 'ally2', 'ally3', 'ally4', 'ally5', 'ally6',
+             'enemy1', 'enemy2', 'enemy3', 'enemy4', 'enemy5', 'enemy6']
 
 screenshots_path = os.path.expanduser('~\Documents\Overwatch\ScreenShots\Overwatch')
 log.info("screenshots_path is " + screenshots_path)
@@ -161,8 +156,7 @@ while True:
         process_threshold = 70
         refresh_delay = 0.5
         synergy_weight = 0.25
-        low_precision = False
-        process_allies = True
+        low_precision = True
         include_allies_in_counters = True
         highlight_yourself = True
         show_processing_text = False
@@ -180,7 +174,6 @@ while True:
                 refresh_delay = float(config['MAIN']['refresh_delay'])
                 synergy_weight = float(config['MAIN']['synergy_weight'])
                 low_precision = ast.literal_eval(config['MAIN']['low_precision'])
-                process_allies = ast.literal_eval(config['MAIN']['process_allies'])
                 include_allies_in_counters = ast.literal_eval(config['MAIN']['include_allies_in_counters'])
                 highlight_yourself = ast.literal_eval(config['MAIN']['highlight_yourself'])
                 show_processing_text = ast.literal_eval(config['MAIN']['show_processing_text'])
@@ -274,9 +267,8 @@ while True:
         enemy6 = screenshot.crop((1402, 279, 1478, 355))
 
         filenames_opened = []
-        if process_allies:
-            filenames_opened.extend((ally1, ally2, ally3, ally4, ally5, ally6))
-        filenames_opened.extend((enemy1, enemy2, enemy3, enemy4, enemy5, enemy6))
+        filenames_opened.extend((ally1, ally2, ally3, ally4, ally5, ally6,
+                                 enemy1, enemy2, enemy3, enemy4, enemy5, enemy6))
 
         allied_team = []
         enemy_team = []
@@ -341,19 +333,17 @@ while True:
         print("Processing finished in " + str(process_time_elapsed)[0:3] + " seconds")
         log.info("Image recognition finished in " + str(process_time_elapsed) + " seconds")
         log.info("Enemy team is " + str(enemy_team))
-        if process_allies:
-            log.info("Allied team is " + str(allied_team))
+        log.info("Allied team is " + str(allied_team))
         log.info("Confidences (allied first): " + str(total_confidence))
 
         enemy_team_fancy = ''
         for i in enemy_team:
             hero = conv.fancify(i)
             enemy_team_fancy += (hero + ', ')
-        if process_allies:
-            allied_team_fancy = ''
-            for i in allied_team:
-                hero = conv.fancify(i)
-                allied_team_fancy += (hero + ', ')
+        allied_team_fancy = ''
+        for i in allied_team:
+            hero = conv.fancify(i)
+            allied_team_fancy += (hero + ', ')
 
         total_conf_average = int(sum(total_confidence) / float(len(total_confidence)))
         log.info("Image recognition had a confidence of " + str(total_conf_average))
@@ -380,7 +370,7 @@ while True:
             log.info("The enemy team is NOT loading or unknown")
             log.info("The enemy team is NOT loading or unknown")
 
-        if total_conf_average > process_threshold and process_allies and enemy_is_heroes:
+        if total_conf_average > process_threshold and enemy_is_heroes:
             # get overall team counter advantage
             allied_team_synergy = 0
             for ally_hero1 in allied_team:
@@ -446,7 +436,6 @@ while True:
                 dps_counters = []
                 tank_counters = []
                 heal_counters = []
-
                 for pair in sorted_counters:
                     just_name = pair[0]
                     just_num = round(pair[1])
