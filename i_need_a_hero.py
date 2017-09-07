@@ -40,6 +40,20 @@ def does_team_have_categories(team):
     if out_string != "":
         print(out_string)
 
+
+def remove_dead_from_team(team_list):
+    alive_list = []
+    for hero in team_list:
+        hero = conv.strip_dead(hero)
+        alive_list.append(hero)
+    return alive_list
+
+
+def compare_teams(new_team, old_team):
+    team_diff_list = set(new_team).intersection(old_team)
+    team_diff_num = 6 - len(team_diff_list)
+    return team_diff_num
+
 exception_handler.setup_excepthook()
 log.info("START")
 
@@ -70,7 +84,7 @@ log.cleanup(max_logs)
 if dev:
     print('FYI, developer mode is on.')
     exception_handler.disable_sentry()
-    dev_file = 'testing/bettercrop.jpg'
+    dev_file = 'testing/harder.jpg'
     log.debug("Developer mode is on, dev_file is " + dev_file)
 
 heroes = ['ana', 'bastion', 'dva', 'genji', 'hanzo',
@@ -99,6 +113,8 @@ for i in heroes:
 
 filenames = ['ally1', 'ally2', 'ally3', 'ally4', 'ally5', 'ally6',
              'enemy1', 'enemy2', 'enemy3', 'enemy4', 'enemy5', 'enemy6']
+allied_team_previous = []
+enemy_team_previous = []
 
 screenshots_path = os.path.expanduser('~\Documents\Overwatch\ScreenShots\Overwatch')
 log.info("screenshots_path is " + screenshots_path)
@@ -350,13 +366,26 @@ while True:
 
         if total_conf_average > process_threshold:
             print("Confidence: " + str(total_conf_average) + '%')
+            
             print("Enemy team: " + enemy_team_fancy[:-2])
             does_team_have_categories(enemy_team)
+            if enemy_team_previous:
+                difference_from_previous_enemy = compare_teams(remove_dead_from_team(enemy_team), enemy_team_previous)
+                print("({} new from previous analysis)".format(difference_from_previous_enemy))
+                log.info("Diff from previous run (enemy): {}".format(difference_from_previous_enemy))
+            
             print("Allied team: " + allied_team_fancy[:-2])
             does_team_have_categories(allied_team)
+            if allied_team_previous:
+                difference_from_previous_allied = compare_teams(remove_dead_from_team(allied_team), allied_team_previous)
+                print("({} new from previous analysis)".format(difference_from_previous_allied))
+                log.info("Diff from previous run (allied): {}".format(difference_from_previous_allied))
         else:
             print("This screenshot doesn't seem to be of the tab menu " +
                   "(needs " + str(process_threshold) + "% confidence, got " + str(total_conf_average) + "%)")
+
+        allied_team_previous = remove_dead_from_team(allied_team)
+        enemy_team_previous = remove_dead_from_team(enemy_team)
 
         enemy_is_heroes = True
         j = 0
