@@ -23,9 +23,11 @@ def setup_excepthook():
     sys.excepthook = log_any_uncaught_exception
 
 
-def disable_sentry():
+def sentry_mode(enabled):  # activated!
     global sentry_enabled
-    sentry_enabled = False
+    if enabled != sentry_enabled:
+        log.info("Sentry mode changed to {}".format(enabled))
+    sentry_enabled = enabled
 
 client = Client('https://891e30a1022e4779a11e338953052327:be5cc4d0753d42fc84521b0876ab1463@sentry.io/211260')
 sentry_enabled = True

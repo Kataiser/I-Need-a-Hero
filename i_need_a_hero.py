@@ -61,6 +61,7 @@ log.info("START")
 refresh_delay = 0.5
 max_logs = 10
 dev = False
+error_reporting = True
 
 try:
     config = configparser.ConfigParser()  # load some settings
@@ -69,6 +70,7 @@ try:
         refresh_delay = float(config['MAIN']['refresh_delay'])
         max_logs = float(config['MAIN']['max_logs'])
         dev = ast.literal_eval(config['MAIN']['dev'])
+        error_reporting = ast.literal_eval(config['MAIN']['error_reporting'])
 
         settings_raw = configfile.readlines()
         settings_raw = settings_raw[0:13]
@@ -81,9 +83,11 @@ except:
 
 log.cleanup(max_logs)
 
+exception_handler.sentry_mode(error_reporting)
+
 if dev:
     print('FYI, developer mode is on.')
-    exception_handler.disable_sentry()
+    exception_handler.sentry_mode(False)
     dev_file = 'testing/harder.jpg'
     log.debug("Developer mode is on, dev_file is " + dev_file)
 
@@ -178,6 +182,7 @@ while True:
         show_processing_text = False
         old_counter_list = False
         dev = False
+        error_reporting = True
         preview = False
         preview_scale = 0.25
 
@@ -195,6 +200,7 @@ while True:
                 show_processing_text = ast.literal_eval(config['MAIN']['show_processing_text'])
                 old_counter_list = ast.literal_eval(config['MAIN']['old_counter_list'])
                 dev = ast.literal_eval(config['MAIN']['dev'])
+                error_reporting = ast.literal_eval(config['MAIN']['error_reporting'])
                 preview = ast.literal_eval(config['MAIN']['preview'])
                 preview_scale = float(config['MAIN']['preview_scale'])
 
@@ -206,6 +212,9 @@ while True:
             settings_error = exception_handler.format_caught_exception(sys.exc_info())
             print('{} "{}", reverting to default settings'.format(settings_error_prefix, sys.exc_info()[1]))
             log.error(settings_error_prefix + settings_error)
+        
+        if not dev:
+            exception_handler.sentry_mode(error_reporting)
 
         inputs_diff = list(set(os.listdir(screenshots_path)) - set(inputs_before))
         log.info("inputs_diff is " + str(inputs_diff))
