@@ -368,7 +368,6 @@ while True:
             log.info("The enemy team IS loading or unknown")
         else:
             log.info("The enemy team is NOT loading or unknown")
-            log.info("The enemy team is NOT loading or unknown")
 
         if total_conf_average > process_threshold and enemy_is_heroes:
             # get overall team counter advantage
