@@ -51,7 +51,7 @@ def remove_dead_from_team(team_list):
 def compare_teams(new_team, old_team):
     team_diff_list = set(new_team).intersection(old_team)
     team_diff_num = 6 - len(team_diff_list)
-    return team_diff_num
+    return team_diff_num, list(team_diff_list)
 
 
 exception_handler.setup_excepthook()
@@ -149,6 +149,8 @@ log.info("The learned folder has " + str(len(learned_images)) + " images")
 mask = Image.open('resources/mask.png').convert('RGBA')  # used to ignore metal winged BS
 log.info("Mask opened: " + str(mask))
 
+last_run_time = None
+
 loading_time = loading.done()
 log.info("Loaded in " + str(loading_time) + " seconds")
 
@@ -221,7 +223,13 @@ while True:
         current_filename = str(inputs_diff)[2:-2]  # removes brackets and quotes
         if dev:
             current_filename = dev_file
-        print("\nProcessing " + current_filename + " at " + str(time.strftime('%I:%M:%S %p', time.localtime())))
+
+        postfix = ""
+        if last_run_time:
+            postfix = "({} seconds since last run)".format(round(time.perf_counter() - last_run_time))
+        print("\nProcessing {} at {} {}".format(current_filename, str(time.strftime('%I:%M:%S %p', time.localtime())),
+                                                postfix))
+        last_run_time = time.perf_counter()
         log.info("Processing " + current_filename)
 
         if not dev:
@@ -379,21 +387,21 @@ while True:
             missing_categories_enemy = does_team_have_categories(enemy_team)
             log.info("Missing categories (enemy): {}".format(missing_categories_enemy))
             print("Enemy team: {}".format(enemy_team_fancy[:-2]))
-            diff_from_previous_enemy = 0
+            diff_from_previous_enemy = (0, [])
             if enemy_team_previous:
                 diff_from_previous_enemy = compare_teams(remove_dead_from_team(enemy_team), enemy_team_previous)
             print("({} changed from previous analysis) {}"
-                  .format(diff_from_previous_enemy, missing_categories_enemy))
+                  .format(diff_from_previous_enemy[0], missing_categories_enemy))
             log.info("Diff from previous run (enemy): {}".format(diff_from_previous_enemy))
 
             missing_categories_allied = does_team_have_categories(allied_team)
             log.info("Missing categories (allied): {}".format(missing_categories_allied))
             print("Allied team: {} {}".format(allied_team_fancy[:-2], missing_categories_allied))
-            diff_from_previous_allied = 0
+            diff_from_previous_allied = (0, [])
             if allied_team_previous:
                 diff_from_previous_allied = compare_teams(remove_dead_from_team(allied_team), allied_team_previous)
             print("({} changed from previous analysis) {}"
-                  .format(diff_from_previous_allied, missing_categories_allied))
+                  .format(diff_from_previous_allied[0], missing_categories_allied))
             log.info("Diff from previous run (allied): {}".format(diff_from_previous_allied))
         else:
             print("This screenshot doesn't seem to be of the tab menu " +
