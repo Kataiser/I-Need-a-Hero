@@ -380,14 +380,14 @@ while True:
             does_team_have_categories(enemy_team)
             if enemy_team_previous:
                 difference_from_previous_enemy = compare_teams(remove_dead_from_team(enemy_team), enemy_team_previous)
-                print("({} new from previous analysis)".format(difference_from_previous_enemy))
+                print("({} changed from previous analysis)".format(difference_from_previous_enemy))
                 log.info("Diff from previous run (enemy): {}".format(difference_from_previous_enemy))
             
             print("Allied team: " + allied_team_fancy[:-2])
             does_team_have_categories(allied_team)
             if allied_team_previous:
                 difference_from_previous_allied = compare_teams(remove_dead_from_team(allied_team), allied_team_previous)
-                print("({} new from previous analysis)".format(difference_from_previous_allied))
+                print("({} changed from previous analysis)".format(difference_from_previous_allied))
                 log.info("Diff from previous run (allied): {}".format(difference_from_previous_allied))
         else:
             print("This screenshot doesn't seem to be of the tab menu " +
@@ -496,14 +496,14 @@ while True:
                 final_counters_heal = format_counter_list(heal_counters)
                 print('\n')
 
-                print("Counters (higher is better)")
+                print("Results (higher is better)")
                 print("DPS - " + final_counters_dps)
                 print("Tanks - " + final_counters_tank)
                 print("Healers - " + final_counters_heal)
             else:
                 final_counters = format_counter_list(sorted_counters)
                 print('\n')
-                print("Counters (higher is better)")
+                print("Results (higher is better)")
                 print(final_counters)
 
             if highlight_yourself:
