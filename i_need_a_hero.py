@@ -37,8 +37,7 @@ def does_team_have_categories(team):
         out_string += "[No tanks] "
     if not any(x in team_alive for x in heroes_heal):
         out_string += "[No healers] "
-    if out_string != "":
-        print(out_string)
+    return out_string
 
 
 def remove_dead_from_team(team_list):
@@ -53,6 +52,7 @@ def compare_teams(new_team, old_team):
     team_diff_list = set(new_team).intersection(old_team)
     team_diff_num = 6 - len(team_diff_list)
     return team_diff_num
+
 
 exception_handler.setup_excepthook()
 log.info("START")
@@ -375,20 +375,26 @@ while True:
 
         if total_conf_average > process_threshold:
             print("Confidence: " + str(total_conf_average) + '%')
-            
-            print("Enemy team: " + enemy_team_fancy[:-2])
-            does_team_have_categories(enemy_team)
+
+            missing_categories_enemy = does_team_have_categories(enemy_team)
+            log.info("Missing categories (enemy): {}".format(missing_categories_enemy))
+            print("Enemy team: {}".format(enemy_team_fancy[:-2]))
+            diff_from_previous_enemy = 0
             if enemy_team_previous:
-                difference_from_previous_enemy = compare_teams(remove_dead_from_team(enemy_team), enemy_team_previous)
-                print("({} changed from previous analysis)".format(difference_from_previous_enemy))
-                log.info("Diff from previous run (enemy): {}".format(difference_from_previous_enemy))
-            
-            print("Allied team: " + allied_team_fancy[:-2])
-            does_team_have_categories(allied_team)
+                diff_from_previous_enemy = compare_teams(remove_dead_from_team(enemy_team), enemy_team_previous)
+            print("({} changed from previous analysis) {}"
+                  .format(diff_from_previous_enemy, missing_categories_enemy))
+            log.info("Diff from previous run (enemy): {}".format(diff_from_previous_enemy))
+
+            missing_categories_allied = does_team_have_categories(allied_team)
+            log.info("Missing categories (allied): {}".format(missing_categories_allied))
+            print("Allied team: {} {}".format(allied_team_fancy[:-2], missing_categories_allied))
+            diff_from_previous_allied = 0
             if allied_team_previous:
-                difference_from_previous_allied = compare_teams(remove_dead_from_team(allied_team), allied_team_previous)
-                print("({} changed from previous analysis)".format(difference_from_previous_allied))
-                log.info("Diff from previous run (allied): {}".format(difference_from_previous_allied))
+                diff_from_previous_allied = compare_teams(remove_dead_from_team(allied_team), allied_team_previous)
+            print("({} changed from previous analysis) {}"
+                  .format(diff_from_previous_allied, missing_categories_allied))
+            log.info("Diff from previous run (allied): {}".format(diff_from_previous_allied))
         else:
             print("This screenshot doesn't seem to be of the tab menu " +
                   "(needs " + str(process_threshold) + "% confidence, got " + str(total_conf_average) + "%)")
