@@ -212,7 +212,7 @@ while True:
             settings_error = exception_handler.format_caught_exception(sys.exc_info())
             print('{} "{}", reverting to default settings'.format(settings_error_prefix, sys.exc_info()[1]))
             log.error(settings_error_prefix + settings_error)
-        
+
         if not dev:
             exception_handler.sentry_mode(error_reporting)
 
@@ -393,9 +393,6 @@ while True:
             print("This screenshot doesn't seem to be of the tab menu " +
                   "(needs " + str(process_threshold) + "% confidence, got " + str(total_conf_average) + "%)")
 
-        allied_team_previous = remove_dead_from_team(allied_team)
-        enemy_team_previous = remove_dead_from_team(enemy_team)
-
         enemy_is_heroes = True
         j = 0
         for i in enemy_team:
@@ -406,6 +403,10 @@ while True:
             log.info("The enemy team IS loading or unknown")
         else:
             log.info("The enemy team is NOT loading or unknown")
+
+        if enemy_is_heroes:
+            allied_team_previous = remove_dead_from_team(allied_team)
+            enemy_team_previous = remove_dead_from_team(enemy_team)
 
         if total_conf_average > process_threshold and enemy_is_heroes:
             # get overall team counter advantage
