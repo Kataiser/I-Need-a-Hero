@@ -396,7 +396,7 @@ while True:
 
             missing_categories_allied = does_team_have_categories(allied_team)
             log.info("Missing categories (allied): {}".format(missing_categories_allied))
-            print("Allied team: {} {}".format(allied_team_fancy[:-2], missing_categories_allied))
+            print("Allied team: {}".format(allied_team_fancy[:-2]))
             diff_from_previous_allied = (0, [])
             if allied_team_previous:
                 diff_from_previous_allied = compare_teams(remove_dead_from_team(allied_team), allied_team_previous)
