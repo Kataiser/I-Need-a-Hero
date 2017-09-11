@@ -1,0 +1,7 @@
+These counters and synergies are far from accurate, but I'm too busy with programming the rest of this and college (okay,
+and I'm lazy) to ensure their accuracy. For example, Doomfist and Orisa are missing lots of data due to being new. If you
+want to help improve these, go to these websites and make changes:
+
+counters.xlsx: https://docs.google.com/spreadsheets/d/1I6ESDyhSlwCVxIIftHPJv4_79cabIJ26UF3D5j0eRdI/edit?usp=sharing
+counters.csv: http://overwatchcountersguide.com/counters
+synergies.csv: http://overwatchcountersguide.com/synergy
