@@ -96,6 +96,7 @@ def get_synergy(hero1, hero2, blank_is_negative):
         return synergy_value_average
     return 0  # if doomfist or orisa
 
+
 exception_handler.setup_excepthook()
 
 # setup for xlsx

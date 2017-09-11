@@ -16,7 +16,6 @@ def average_images(*arg):
         opened_images = []
         for filename in arg:
             opened_images.append(Image.open(filename).convert('RGBA'))
-            opened_images.append(Image.open(filename).convert('RGBA'))
 
         output = Image.blend(opened_images[0], opened_images[1], 0.5)
 
@@ -30,6 +29,7 @@ def average_images(*arg):
     output.paste(mask, (0, 0), mask)
     return output.convert('RGB')
 
+
 heroes = ['ana', 'bastion', 'dva', 'genji', 'hanzo',
           'junkrat', 'lucio', 'mccree', 'mei', 'mercy',
           'pharah', 'reaper', 'reinhardt', 'roadhog', 'soldier',
@@ -40,7 +40,7 @@ heroes = ['ana', 'bastion', 'dva', 'genji', 'hanzo',
           'roadhogdead', 'soldierdead', 'sombradead', 'torbjorndead', 'tracerdead',
           'zaryadead', 'zenyattadead', 'hanzodead', 'mercydead', 'orisadead',
           'reinhardtdead', 'symmetradead', 'widowmakerdead', 'winstondead', 'orisa',
-          'doomfist', 'doomfistdead']
+          'doomfist', 'doomfistdead', 'unknowndead']
 
 learning_files = os.listdir('learning')
 

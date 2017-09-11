@@ -88,7 +88,7 @@ exception_handler.sentry_mode(error_reporting)
 if dev:
     print('FYI, developer mode is on.')
     exception_handler.sentry_mode(False)
-    dev_file = 'testing/harder.jpg'
+    dev_file = 'testing/unknowndead.jpg'
     log.debug("Developer mode is on, dev_file is " + dev_file)
 
 heroes = ['ana', 'bastion', 'dva', 'genji', 'hanzo',
@@ -101,7 +101,7 @@ heroes = ['ana', 'bastion', 'dva', 'genji', 'hanzo',
           'roadhogdead', 'soldierdead', 'sombradead', 'torbjorndead', 'tracerdead',
           'zaryadead', 'zenyattadead', 'hanzodead', 'mercydead', 'orisadead',
           'reinhardtdead', 'symmetradead', 'widowmakerdead', 'winstondead', 'orisa',
-          'doomfist', 'doomfistdead']
+          'doomfist', 'doomfistdead', 'unknowndead']
 
 heroes_dps = ['bastion', 'genji', 'hanzo', 'junkrat', 'mccree',
               'mei', 'pharah', 'reaper', 'soldier', 'sombra',
@@ -112,7 +112,7 @@ heroes_heal = ['ana', 'lucio', 'mercy', 'zenyatta']
 heroes_normal = []  # a list of heroes, not fancy, without unknown, loading, or dead
 for i in heroes:
     hero = conv.strip_dead(i)
-    if ('unknown' not in hero) and ('loading' not in hero):
+    if ('unknown' not in hero) and ('unknowndead' not in hero) and ('loading' not in hero):  # what a mess
         heroes_normal.append(hero)
 
 filenames = ['ally1', 'ally2', 'ally3', 'ally4', 'ally5', 'ally6',
@@ -410,7 +410,7 @@ while True:
         enemy_is_heroes = True
         j = 0
         for i in enemy_team:
-            if (i == 'loading') or (i == 'unknown'):
+            if (i == 'loading') or (i == 'unknown') or (i == 'unknowndead'):
                 j += 1
         if j == 6:
             enemy_is_heroes = False  # if everyone on the enemy team is loading or unknown
@@ -472,12 +472,12 @@ while True:
                 all_counters[any_hero] = 0
                 for enemy_hero in enemy_team:
                     enemy_hero = conv.strip_dead(enemy_hero)
-                    if ('unknown' not in any_hero) and ('loading' not in any_hero):
+                    if ('unknown' not in any_hero) and ('unknowndead' not in any_hero) and ('loading' not in any_hero):
                         countered = get_counter(any_hero, enemy_hero)
                         all_counters[any_hero] += countered
                 for ally_hero in allied_team:
                     ally_hero = conv.strip_dead(ally_hero)
-                    if ('unknown' not in any_hero) and ('loading' not in any_hero):
+                    if ('unknown' not in any_hero) and ('unknowndead' not in any_hero) and ('loading' not in any_hero):
                         synergy = get_synergy(any_hero, ally_hero, False)
                         all_counters[any_hero] -= synergy * synergy_weight
 
