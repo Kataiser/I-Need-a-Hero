@@ -66,8 +66,8 @@ def get_counter(hero1, hero2):
 def get_synergy(hero1, hero2, blank_is_negative):
     hero1 = conv.fancify(hero1)
     hero2 = conv.fancify(hero2)
-    if hero1 == 'Soldier 76':
-        hero1 = 'Soldier: 76'
+    if hero1 == 'Soldier 76':  # this is formatted with a colon in the csv
+        hero1 = 'Soldier: 76'  # but without one in this program
     if hero2 == 'Soldier 76':
         hero2 = 'Soldier: 76'
     if blank_is_negative:

@@ -26,6 +26,9 @@ def format_counter_list(counter_list):
 
 
 def does_team_have_categories(team):
+    if team == enemy_team and not enemy_is_heroes:
+        return ""
+
     team_alive = []
     for possibly_dead_hero in team:
         team_alive.append(conv.strip_dead(possibly_dead_hero))
@@ -88,7 +91,7 @@ exception_handler.sentry_mode(error_reporting)
 if dev:
     print('FYI, developer mode is on.')
     exception_handler.sentry_mode(False)
-    dev_file = 'testing/unknowndead.jpg'
+    dev_file = 'testing/harder.jpg'
     log.debug("Developer mode is on, dev_file is " + dev_file)
 
 heroes = ['ana', 'bastion', 'dva', 'genji', 'hanzo',
@@ -381,6 +384,17 @@ while True:
         total_conf_average = int(sum(total_confidence) / float(len(total_confidence)))
         log.info("Image recognition had a confidence of " + str(total_conf_average))
 
+        enemy_is_heroes = True
+        j = 0
+        for i in enemy_team:
+            if (i == 'loading') or (i == 'unknown') or (i == 'unknowndead'):
+                j += 1
+        if j == 6:
+            enemy_is_heroes = False  # if everyone on the enemy team is loading or unknown
+            log.info("The enemy team IS loading or unknown")
+        else:
+            log.info("The enemy team is NOT loading or unknown")
+
         if total_conf_average > process_threshold:
             print("Confidence: " + str(total_conf_average) + '%')
 
@@ -406,17 +420,6 @@ while True:
         else:
             print("This screenshot doesn't seem to be of the tab menu " +
                   "(needs " + str(process_threshold) + "% confidence, got " + str(total_conf_average) + "%)")
-
-        enemy_is_heroes = True
-        j = 0
-        for i in enemy_team:
-            if (i == 'loading') or (i == 'unknown') or (i == 'unknowndead'):
-                j += 1
-        if j == 6:
-            enemy_is_heroes = False  # if everyone on the enemy team is loading or unknown
-            log.info("The enemy team IS loading or unknown")
-        else:
-            log.info("The enemy team is NOT loading or unknown")
 
         if enemy_is_heroes:
             allied_team_previous = remove_dead_from_team(allied_team)
