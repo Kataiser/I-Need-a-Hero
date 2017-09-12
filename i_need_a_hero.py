@@ -51,9 +51,17 @@ def remove_dead_from_team(team_list):
     return alive_list
 
 
+def fancify_hero_list(team_list):
+    alive_list = ""
+    for hero in team_list:
+        hero = conv.fancify(hero)
+        alive_list += hero + ", "
+    return alive_list[:-2]
+
+
 def compare_teams(new_team, old_team):
-    team_diff_list = set(new_team).intersection(old_team)
-    team_diff_num = 6 - len(team_diff_list)
+    team_diff_list = set(new_team).difference(old_team)
+    team_diff_num = len(team_diff_list)
     return team_diff_num, list(team_diff_list)
 
 
@@ -244,7 +252,7 @@ while True:
                 print("This doesn't seem to be an image file.")
                 inputs_before = os.listdir(screenshots_path)  # resets screenshot folder list
                 log.error("Couldn't open screenshot file: {}".format(
-                          exception_handler.format_caught_exception(sys.exc_info())))
+                    exception_handler.format_caught_exception(sys.exc_info())))
                 continue
         else:
             screenshot = Image.open(dev_file)
@@ -404,9 +412,10 @@ while True:
             diff_from_previous_enemy = (0, [])
             if enemy_team_previous:
                 diff_from_previous_enemy = compare_teams(remove_dead_from_team(enemy_team), enemy_team_previous)
-            print("({} changed from previous analysis) {}"
-                  .format(diff_from_previous_enemy[0], missing_categories_enemy))
-            log.info("Diff from previous run (enemy): {}".format(diff_from_previous_enemy))
+            print("({} changed from previous analysis: {}) {}"
+                  .format(diff_from_previous_enemy[0], fancify_hero_list(diff_from_previous_enemy[1]),
+                          missing_categories_enemy))
+            log.info("Diffs from previous run (enemy): {}".format(diff_from_previous_enemy[1]))
 
             missing_categories_allied = does_team_have_categories(allied_team)
             log.info("Missing categories (allied): {}".format(missing_categories_allied))
@@ -414,9 +423,10 @@ while True:
             diff_from_previous_allied = (0, [])
             if allied_team_previous:
                 diff_from_previous_allied = compare_teams(remove_dead_from_team(allied_team), allied_team_previous)
-            print("({} changed from previous analysis) {}"
-                  .format(diff_from_previous_allied[0], missing_categories_allied))
-            log.info("Diff from previous run (allied): {}".format(diff_from_previous_allied))
+            print("({} changed from previous analysis: {}) {}"
+                  .format(diff_from_previous_allied[0], fancify_hero_list(diff_from_previous_allied[1]),
+                          missing_categories_allied))
+            log.info("Diffs from previous run (allied): {}".format(diff_from_previous_allied[1]))
         else:
             print("This screenshot doesn't seem to be of the tab menu " +
                   "(needs " + str(process_threshold) + "% confidence, got " + str(total_conf_average) + "%)")
@@ -434,7 +444,7 @@ while True:
                     ally_hero2 = conv.strip_dead(ally_hero2)
                     synergy = get_synergy(ally_hero1, ally_hero2, True)
                     allied_team_synergy += synergy
-                            
+
             enemy_team_synergy = 0
             for enemy_hero1 in enemy_team:
                 for enemy_hero2 in enemy_team:
@@ -451,7 +461,7 @@ while True:
 
             team_synergy_diff = (allied_team_synergy - enemy_team_synergy) * synergy_weight
             log.info("Team counter/synergy advantage is {}/{}".format(allied_team_counter, team_synergy_diff))
-            
+
             if allied_team_counter > 1:
                 print("Your team has an counter advantage of {}".format(round(allied_team_counter)))
             elif allied_team_counter < -1:
@@ -527,7 +537,7 @@ while True:
                 print(yourself)
                 log.info("Yourself: '" + yourself + "'")
 
-            # end getting counters
+                # end getting counters
         elif not enemy_is_heroes:
             print("\nThe enemy team appears to be all loading or unknown, which counters can't be calculated from.")
 
