@@ -102,7 +102,7 @@ exception_handler.sentry_mode(error_reporting)
 if dev:
     print('FYI, developer mode is on.')
     exception_handler.sentry_mode(False)
-    dev_file = 'testing/harder.jpg'
+    dev_file = 'testing/bettercrop.jpg'
     log.debug("Developer mode is on, dev_file is " + dev_file)
 
 heroes = ['ana', 'bastion', 'dva', 'genji', 'hanzo',
@@ -460,7 +460,7 @@ while True:
             for i in enemy_team:
                 for j in allied_team:
                     cross_team_counter = get_counter(i, j)
-                    allied_team_counter += cross_team_counter
+                    allied_team_counter -= cross_team_counter
 
             team_synergy_diff = (allied_team_synergy - enemy_team_synergy) * synergy_weight
             log.info("Team counter/synergy advantage is {}/{}".format(allied_team_counter, team_synergy_diff))

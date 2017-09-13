@@ -17,7 +17,7 @@ def get_counter_xlsx(hero1, hero2):
     result = sheet.cell(row=posx, column=posy).value  # load from spreadsheet
     if not result:  # probably useless
         result = 0
-    return int(result)
+    return int(-result)
 
 
 def get_counter_csv(hero1, hero2):
@@ -45,7 +45,7 @@ def get_counter_csv(hero1, hero2):
         counter_value1 = int(convert_values_table[str(counter_value1)])
         counter_value2 = int(convert_values_table_reversed[str(counter_value2)])
         counter_value_average = (counter_value1 + counter_value2) / 2
-        return counter_value_average
+        return -counter_value_average
     return None  # if doomfist or orisa
 
 
@@ -93,7 +93,7 @@ def get_synergy(hero1, hero2, blank_is_negative):
         synergy_value1 = int(convert_values_table[str(synergy_value1)])
         synergy_value2 = int(convert_values_table[str(synergy_value2)])
         synergy_value_average = (synergy_value1 + synergy_value2) / 2
-        return synergy_value_average
+        return -synergy_value_average
     return 0  # if doomfist or orisa
 
 
