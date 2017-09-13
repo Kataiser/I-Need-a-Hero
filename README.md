@@ -26,4 +26,9 @@ Unzip anywhere. To run, double click "I Need a Hero", move the window to a secon
 
 **Sentry.io:** https://sentry.io/kataiser/i-need-a-hero/
 
+Uses:
+- [Pillow](https://python-pillow.org/)
+- [OpenPyXL](https://openpyxl.readthedocs.io/en/default/)
+- [tqdm](https://github.com/noamraph/tqdm)
+
 *All character names and portraits used are property of Blizzard Entertainment Inc. This program is not associated with nor endorsed by Blizzard Entertainment.*
