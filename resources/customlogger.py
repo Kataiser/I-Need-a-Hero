@@ -1,5 +1,6 @@
 import time
 import os
+import sys
 
 from raven import breadcrumbs
 from resources import exception_handler
@@ -12,6 +13,8 @@ def write_log(level, message_out):
     full_line = "[{} +{}] {}: {}\n".format(current_time, time_since_start, level, message_out)
     log_file.write(full_line)
     log_file.close()
+    if to_stderr:
+        print(full_line, file=sys.stderr)
     breadcrumbs.record(message=full_line, level=level)  # sentry level = custom level
 
 
@@ -42,10 +45,12 @@ def cleanup(max_logs):  # deletes older logs
         overshoot = max_logs - len(all_logs)
     info("Deleted " + str(deleted) + " log(s)")
 
+
 exception_handler.setup_excepthook()
 
 start_time = time.perf_counter()
 filename = str('logs/' + str(round(time.time())) + '.log')
+to_stderr = False
 
 try:
     open(filename, 'x')
