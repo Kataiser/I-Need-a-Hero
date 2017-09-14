@@ -105,7 +105,7 @@ exception_handler.sentry_mode(error_reporting)
 if dev:
     print('FYI, developer mode is on.')
     exception_handler.sentry_mode(False)
-    dev_file = 'testing/16-10.jpg'
+    dev_file = 'testing/synergytest.jpg'
     log.debug("Developer mode is on, dev_file is " + dev_file)
 
 heroes = ['ana', 'bastion', 'dva', 'genji', 'hanzo',
@@ -268,8 +268,8 @@ while True:
             screenshot = Image.open(dev_file)
             log.debug("Dev screenshot opened successfully: " + str(screenshot))
 
+        width, height = screenshot.size
         if preview:
-            width, height = screenshot.size
             preview_dimensions = (round(width * preview_scale), round(height * preview_scale))
             screenshot.resize(preview_dimensions).save('preview.png')
             log.info("Saved preview {}".format(preview_dimensions))
@@ -281,8 +281,6 @@ while True:
                 log.info("No preview to delete")
                 pass
 
-        if not width:
-            width, height = screenshot.size
         aspect_ratio = width / height
         log.info("Aspect ratio is {} ({} / {})".format(aspect_ratio, width, height))
         if aspect_ratio > 2:  # the aspect ratio the user is running at is 21:9
