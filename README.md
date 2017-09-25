@@ -24,8 +24,6 @@ Unzip anywhere. To run, double click "I Need a Hero", move the window to a secon
 
 **Trello board:** https://trello.com/b/7pb5hLHX
 
-**Sentry.io:** https://sentry.io/kataiser/i-need-a-hero/
-
 Uses:
 - [Pillow](https://python-pillow.org/)
 - [OpenPyXL](https://openpyxl.readthedocs.io/en/default/)
