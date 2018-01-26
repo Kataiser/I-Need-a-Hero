@@ -272,7 +272,7 @@ while True:
         width, height = screenshot.size
         if preview:
             preview_dimensions = (round(width * preview_scale), round(height * preview_scale))
-            screenshot.resize(preview_dimensions).save('preview.png')
+            screenshot.resize(preview_dimensions, resample=Image.BICUBIC).save('preview.png')
             log.info("Saved preview {}".format(preview_dimensions))
         else:
             try:
