@@ -5,6 +5,7 @@ import configparser
 import os
 import sys
 import time
+import gc
 
 from PIL import Image, ImageFilter
 from tqdm import tqdm
@@ -105,7 +106,7 @@ exception_handler.sentry_mode(error_reporting)
 if dev:
     print('FYI, developer mode is on.')
     exception_handler.sentry_mode(False)
-    dev_file = 'testing/synergytest.jpg'
+    dev_file = 'testing/harder.jpg'
     log.debug("Developer mode is on, dev_file is " + dev_file)
 
 heroes = ['ana', 'bastion', 'dva', 'genji', 'hanzo',
@@ -503,7 +504,7 @@ while True:
                         all_counters[any_hero] -= synergy * synergy_weight
 
             sorted_counters = sorted(all_counters.items(), reverse=True, key=lambda z: z[1])  # wtf
-            log.info("Got " + str(len(sorted_counters)) + " counters")
+            log.info("Counters: {}".format(sorted_counters))
 
             if not old_counter_list:
                 dps_counters = []
@@ -565,6 +566,9 @@ while True:
                       " deleted. Be sure to clean the screenshots folder out manually every now and then.")
         inputs_before = os.listdir(screenshots_path)  # resets screenshot folder list
 
+        garbage = gc.collect()
+        log.info("This GC: {}".format(garbage))
+        log.info("Total GC: {}".format(gc.get_stats()))
         log.info("END LOOP")
 
         if dev:
