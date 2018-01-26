@@ -9,6 +9,7 @@ def done():
           .format(load_time))
     return load_time
 
+
 exception_handler.setup_excepthook()
 
 print('Loading "I Need a Hero", by Kataiser...')

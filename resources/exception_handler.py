@@ -31,7 +31,7 @@ def sentry_mode(enabled):  # activated!
 
 
 client = Client(dsn='https://891e30a1022e4779a11e338953052327:be5cc4d0753d42fc84521b0876ab1463@sentry.io/211260',
-                release='1.5')
+                release='1.6')
 sentry_enabled = True
 
 from resources import customlogger as log  # ew

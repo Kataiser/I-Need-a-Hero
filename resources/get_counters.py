@@ -49,6 +49,21 @@ def get_counter_csv(hero1, hero2):
     return None  # if doomfist or orisa
 
 
+def get_counter_rb(hero1, hero2):
+    if hero1 == 'unknown' or hero1 == 'loading':
+        return 0
+    if hero2 == 'unknown' or hero2 == 'loading':
+        return 0
+    if hero1 == hero2:
+        return 0
+
+    try:
+        counter_value = rb_counters_dict[hero1][hero2]
+        return counter_value[0]
+    except KeyError:
+        return 0
+
+
 def get_counter(hero1, hero2):
     if hero1 == 'unknown' or hero1 == 'loading':
         return 0
@@ -57,10 +72,11 @@ def get_counter(hero1, hero2):
 
     xlsx_results = get_counter_xlsx(hero1, hero2)
     csv_results = get_counter_csv(hero1, hero2)
+    rb_results = get_counter_rb(hero1, hero2)  # weird still
     if csv_results is None:
-        return xlsx_results
+        return xlsx_results + rb_results
     else:
-        return (xlsx_results + csv_results) / 2
+        return (xlsx_results + csv_results) / 2 + rb_results
 
 
 def get_synergy(hero1, hero2, blank_is_negative):
@@ -119,6 +135,14 @@ with open('resources/counters.csv', newline='') as csvfile:  # loads the counter
     for line in reader:  # builds a better counter table, as a list of tuples
         counter_tuple = (line['agent'], line['target'], line['median'])
         counters_table.append(counter_tuple)
+
+with open('resources/rb_counters.csv', newline='') as csvfile:
+    reader = csv.reader(csvfile)
+    rb_counters_dict = {}
+    for line in reader:
+        if line[0] not in rb_counters_dict:
+            rb_counters_dict[line[0]] = {}
+        rb_counters_dict[line[0]][line[1]] = [int(line[2])]
 
 convert_values_table = {'5': -2, '4': -1, '3': 0, '2': 1, '1': 2, '0': 0}
 convert_values_table_reversed = {'5': 2, '4': 1, '3': 0, '2': -1, '1': -2, '0': 0}
