@@ -11,7 +11,6 @@ Uses image recognition, based on an automatically loaded screenshot, to suggest 
 - Shows if a team is missing a category of heroes
 - Shows which team currently has the counter/synergy advantage
 - Sorts by hero category (DPS, tank, and healer)
-- Up to date with new heroes (most recent: Doomfist)
 - Comprehensive, documented settings file
 - Easy installation
 
@@ -25,8 +24,8 @@ Unzip anywhere. To run, double click "I Need a Hero", move the window to a secon
 **Trello board:** https://trello.com/b/7pb5hLHX
 
 Uses:
-- [Pillow](https://python-pillow.org/)
-- [OpenPyXL](https://openpyxl.readthedocs.io/en/default/)
-- [tqdm](https://github.com/noamraph/tqdm)
+- [Pillow](https://python-pillow.org/), used for image recognition.
+- [OpenPyXL](https://openpyxl.readthedocs.io/en/default/), used for spreadsheet manipulation
+- [tqdm](https://github.com/noamraph/tqdm), used to display a nice little loading bar where needed.
 
 *All character names and portraits used are property of Blizzard Entertainment Inc. This program is not associated with nor endorsed by Blizzard Entertainment.*
