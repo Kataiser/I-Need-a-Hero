@@ -138,7 +138,7 @@ filenames = ['ally1', 'ally2', 'ally3', 'ally4', 'ally5', 'ally6',
 allied_team_previous = []
 enemy_team_previous = []
 
-screenshots_path = os.path.expanduser('~\Documents\Overwatch\ScreenShots\Overwatch')
+screenshots_path = os.path.expanduser(os.path.join('~', 'Documents', 'Overwatch', 'ScreenShots', 'Overwatch'))
 log.info("screenshots_path is " + screenshots_path)
 try:
     inputs_before = os.listdir(screenshots_path)  # a list of every file in the screenshots folder
